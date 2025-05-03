@@ -8,74 +8,45 @@ public class RookMoves {
     public RookMoves(){}
 
     public static Collection<ChessMove> PossibleRookMoves(ChessBoard board, ChessPosition myPosition) {
-        ChessPiece moving_piece = board.getPiece(myPosition);
         Collection<ChessMove> movable_places = new ArrayList<>();
         int x = myPosition.getColumn();
         int y = myPosition.getRow();
         ChessPosition currentIteration = new ChessPosition(y,x);
-        while (x<8){  //if at 8 then we're at the edge already and don't want to go any further
-            x++;    //increment to new column
-            currentIteration.setColumn(x);    //set the square we're currently looking at
-            ChessPiece potential_move = board.getPiece(currentIteration);  //see if there is a piece in the square we are looking at
-            if (potential_move == null) {   //if space is empty add it to possible moves
-                ChessPosition movablePos = new ChessPosition(y,x);
-                movable_places.add(new ChessMove(myPosition, movablePos, null));
-            } else if (potential_move.getTeamColor().equals(moving_piece.getTeamColor())) {     //if space is taken by piece of same color then end iteration (cant pass)
-                x = 8;
-            } else {      //if space is taken by opposite color then add this space to movable spaces then end iteration (can't pass)
-                ChessPosition movablePos = new ChessPosition(y,x);
-                movable_places.add(new ChessMove(myPosition, movablePos, null));
-                x = 8;
-            }
+        boolean cont = true;
+
+        //checks spaces to right of rook
+        while (x<8 && cont){  //if at 8 then we just checked the edge and don't want to go further
+            x++; //increment
+            currentIteration.setColumn(x); //change the space we are looking at to check if there is currently a piece there
+            cont = PieceMovesCalculator.CheckOtherPieces(board,myPosition,currentIteration,movable_places,null); //checks if space has a piece there and adds move to list if appropriate
         }
-        x = myPosition.getColumn();
-        while (x>1){
-            x--;
+
+        x = myPosition.getColumn(); //reset x to where the rook is
+        cont = true;  //ensure next while loop occurs
+
+        //checks spaces to left of rook
+        while (x>1 && cont){  //if at 1 then we just checked the edge and don't want to go further
+            x--;  //deincrement
             currentIteration.setColumn(x);
-            ChessPiece potential_move = board.getPiece(currentIteration);
-            if (potential_move == null) {
-                ChessPosition movablePos = new ChessPosition(y,x);
-                movable_places.add(new ChessMove(myPosition, movablePos, null));
-            } else if (potential_move.getTeamColor().equals(moving_piece.getTeamColor())) {
-                x = 1;
-            } else {
-                ChessPosition movablePos = new ChessPosition(y,x);
-                movable_places.add(new ChessMove(myPosition, movablePos, null));
-                x = 1;
-            }
+            cont = PieceMovesCalculator.CheckOtherPieces(board,myPosition,currentIteration,movable_places,null);
         }
+
         x = myPosition.getColumn();
         currentIteration.setColumn(x);
-        while (y>1){
+        cont = true;
+
+        while (y>1 && cont){
             y--;
             currentIteration.setRow(y);
-            ChessPiece potential_move = board.getPiece(currentIteration);
-            if (potential_move == null) {
-                ChessPosition movablePos = new ChessPosition(y,x);
-                movable_places.add(new ChessMove(myPosition, movablePos, null));
-            } else if (potential_move.getTeamColor().equals(moving_piece.getTeamColor())) {
-                y = 1;
-            } else {
-                ChessPosition movablePos = new ChessPosition(y,x);
-                movable_places.add(new ChessMove(myPosition, movablePos, null));
-                y = 1;
-            }
+            cont = PieceMovesCalculator.CheckOtherPieces(board,myPosition,currentIteration,movable_places,null);
         }
         y = myPosition.getRow();
-        while (y<8){
+        cont = true;
+
+        while (y<8 && cont){
             y++;
             currentIteration.setRow(y);
-            ChessPiece potential_move = board.getPiece(currentIteration);
-            if (potential_move == null) {
-                ChessPosition movablePos = new ChessPosition(y,x);
-                movable_places.add(new ChessMove(myPosition, movablePos, null));
-            } else if (potential_move.getTeamColor().equals(moving_piece.getTeamColor())) {
-                y = 8;
-            } else {
-                ChessPosition movablePos = new ChessPosition(y,x);
-                movable_places.add(new ChessMove(myPosition, movablePos, null));
-                y = 8;
-            }
+            cont = PieceMovesCalculator.CheckOtherPieces(board,myPosition,currentIteration,movable_places,null);
         }
         return movable_places;
     }

@@ -25,6 +25,9 @@ public class PieceMovesCalculator {
         if (moving_piece.getPieceType().equals(ChessPiece.PieceType.PAWN)){
             return PawnMoves.PossiblePawnMoves(board,myPosition);
         }
+        if (moving_piece.getPieceType().equals(ChessPiece.PieceType.KING)){
+            return KingMoves.PossibleKingMoves(board,myPosition);
+        }
         return null;
     }
 

@@ -47,6 +47,7 @@ public class ChessBoard {
                 '}';
     }
 
+
     /**
      * Gets a chess piece on the chessboard
      *
@@ -56,6 +57,14 @@ public class ChessBoard {
      */
     public ChessPiece getPiece(ChessPosition position) {
         return squares[position.getRow()-1][position.getColumn()-1];
+    }
+
+    public ChessPiece[][] getSquares() {
+        return squares;
+    }
+
+    public void setSquares(ChessPiece[][] squares) {
+        this.squares = squares;
     }
 
     /**

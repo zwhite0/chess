@@ -13,10 +13,10 @@ import java.util.Objects;
 public class ChessGame {
 
     private ChessGame.TeamColor currentTeamTurn = TeamColor.WHITE;
-    private ChessBoard board;
+    private ChessBoard board = new ChessBoard();
 
     public ChessGame() {
-
+        this.board.resetBoard();
     }
 
     /**

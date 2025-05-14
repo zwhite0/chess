@@ -117,6 +117,21 @@ public class ChessGame {
         ChessPosition oldPosition = move.getStartPosition();
         ChessBoard currentBoard = getBoard();
         ChessPiece currentPiece = currentBoard.getPiece(oldPosition);
+        Collection<ChessMove> validMoves = new ArrayList<>();
+        if (currentPiece != null) {
+            validMoves = validMoves(oldPosition);
+        }
+        boolean isInValidMoves = false;
+
+        for (ChessMove validMove : validMoves){
+            if (validMove.equals(move)){
+                isInValidMoves = true;
+            }
+        }
+
+        if (currentPiece == null || isInCheck(currentPiece.getTeamColor()) || ! isInValidMoves || ! currentPiece.getTeamColor().equals(getTeamTurn())){
+            throw new InvalidMoveException();
+        }
 
         if (move.getPromotionPiece()==null) {
             currentBoard.addPiece(newPosition, currentPiece);
@@ -125,10 +140,13 @@ public class ChessGame {
             currentBoard.addPiece(newPosition, new ChessPiece(currentPiece.getTeamColor(),move.getPromotionPiece()));
             currentBoard.addPiece(oldPosition, null);
         }
-        if (isInCheck(currentPiece.getTeamColor())){
-            throw new InvalidMoveException();
+        setBoard(currentBoard);
+
+        if (getTeamTurn()==TeamColor.WHITE){
+            setTeamTurn(TeamColor.BLACK);
+        } else {
+            setTeamTurn(TeamColor.WHITE);
         }
-        setBoard(board);
     }
 
     /**

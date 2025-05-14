@@ -41,12 +41,12 @@ public class ChessGame {
             return false;
         }
         ChessGame chessGame = (ChessGame) o;
-        return currentTeamTurn == chessGame.currentTeamTurn;
+        return currentTeamTurn == chessGame.currentTeamTurn && Objects.equals(board, chessGame.board);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(currentTeamTurn);
+        return Objects.hash(currentTeamTurn, board);
     }
 
     /**

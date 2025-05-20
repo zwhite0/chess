@@ -1,15 +1,15 @@
 package service;
 
-import dataaccess.MemoryAuthDAO;
-import dataaccess.MemoryUserDAO;
+import dataaccess.AuthDAO;
+import dataaccess.UserDAO;
 import model.AuthData;
 import model.UserData;
 import java.util.UUID;
 
 public class UserService {
 
-    MemoryUserDAO users = new MemoryUserDAO();
-    MemoryAuthDAO auths = new MemoryAuthDAO();
+    UserDAO users;
+    AuthDAO auths;
 
     public RegisterResult register(RegisterRequest registerRequest) throws AlreadyTakenException{
         String username = registerRequest.username();

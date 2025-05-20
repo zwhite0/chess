@@ -8,16 +8,16 @@ import java.util.List;
 
 public class MemoryGameDAO implements GameDAO{
 
-    HashMap<String, GameData> games = new HashMap<>();
+    HashMap<Integer, GameData> games = new HashMap<>();
 
     @Override
     public void createGame(GameData game) {
-
+        games.put(game.gameID(), game);
     }
 
     @Override
-    public GameData getGame(int gameID) {
-        return null;
+    public GameData getGame(Integer gameID) {
+        return games.get(gameID);
     }
 
     @Override
@@ -27,11 +27,11 @@ public class MemoryGameDAO implements GameDAO{
 
     @Override
     public void updateGame(GameData game) {
-
+        games.put(game.gameID(), game);
     }
 
     @Override
     public void clear() {
-
+        games.clear();
     }
 }

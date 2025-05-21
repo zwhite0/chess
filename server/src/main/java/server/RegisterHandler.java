@@ -7,7 +7,7 @@ import service.UserService;
 
 public class RegisterHandler {
 
-    private String registerHandler(String json) {
+    public String registerHandler(String json) {
         UserService newRegister = new UserService();
         var serializer = new Gson();
         RegisterRequest registerRequest = serializer.fromJson(json,RegisterRequest.class);

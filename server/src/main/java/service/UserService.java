@@ -7,9 +7,16 @@ import java.util.UUID;
 
 public class UserService {
 
-    UserDAO users = new MemoryUserDAO();
-    AuthDAO auths =  new MemoryAuthDAO();
-    GameDAO games = new MemoryGameDAO();
+    UserDAO users;
+    AuthDAO auths;
+    GameDAO games;
+
+    public UserService(UserDAO users, AuthDAO auths, GameDAO games){
+        this.users = users;
+        this.auths = auths;
+        this.games = games;
+    }
+
 
     @Override
     public boolean equals(Object obj) {
@@ -44,12 +51,21 @@ public class UserService {
         if (user == null || ! password.equals(user.password())){
             throw new UnauthorizedException("unauthorized");
         }
+        if (user.email() == null){
+            throw new BadRequestException("bad request");
+        }
         String newAuth = UUID.randomUUID().toString();
         auths.createAuth(new AuthData(newAuth, username));
         return new LoginResult(username,newAuth);
     }
 
-    public void logout(LogoutRequest logoutRequest) {}
+    public void logout(LogoutRequest logoutRequest) throws UnauthorizedException {
+        String authToken = logoutRequest.authToken();
+        AuthData auth = auths.getAuth(authToken);
+        if (auth == null){
+            throw new UnauthorizedException("unauthorized");
+        }
+    }
 
     public ClearResult clear(ClearRequest clearRequest){
         users.clear();

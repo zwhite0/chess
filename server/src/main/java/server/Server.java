@@ -95,6 +95,31 @@ public class Server {
            }
         });
 
+        Spark.put("/game", (request, response) -> {
+            JoinGameHandler handler = new JoinGameHandler(auths, games);
+            try {
+                return handler.joinGameHandler(request.headers("authorization"), request.body());
+            } catch (UnauthorizedException e){
+                response.status(401);
+                Gson gson = new Gson();
+                ErrorResponse message = new ErrorResponse("Error: unauthorized");
+                String json = gson.toJson(message);
+                return json;
+            } catch (BadRequestException e){
+                response.status(400);
+                Gson gson = new Gson();
+                ErrorResponse message = new ErrorResponse("Error: bad request");
+                String json = gson.toJson(message);
+                return json;
+            } catch (AlreadyTakenException e){
+                response.status(403);
+                Gson gson = new Gson();
+                ErrorResponse message = new ErrorResponse("Error: already taken");
+                String json = gson.toJson(message);
+                return json;
+            }
+        });
+
         //This line initializes the server and can be removed once you have a functioning endpoint 
         Spark.init();
 

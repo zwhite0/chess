@@ -7,6 +7,8 @@ import dataaccess.UserDAO;
 import model.AuthData;
 import model.GameData;
 
+import java.util.Collection;
+
 public class GameService {
 
     UserDAO users;
@@ -17,6 +19,11 @@ public class GameService {
         this.users = users;
         this.auths = auths;
         this.games = games;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
     }
 
     public CreateGameResult createGame(CreateGameRequest createGameRequest, String authToken) throws UnauthorizedException{
@@ -38,5 +45,48 @@ public class GameService {
                 x++;
             }
         }
+    }
+
+    public JoinGameResult joinGame(JoinGameRequest joinGameRequest, String authToken) throws BadRequestException, UnauthorizedException, AlreadyTakenException{
+        String playerColor = joinGameRequest.playerColor();
+        Integer gameID = joinGameRequest.gameID();
+        if (playerColor == null || gameID == null){
+            throw new BadRequestException("bad request");
+        }
+        AuthData auth = auths.getAuth(authToken);
+        if (auth == null){
+            throw new UnauthorizedException("unauthorized");
+        }
+        String username = auth.username();
+        GameData game = games.getGame(gameID);
+        if (game == null){
+            throw new BadRequestException("bad request");
+        }
+        if (playerColor.equals("WHITE")){
+            if (game.whiteUsername() == null){
+                GameData updatedGame = new GameData(gameID, username, game.blackUsername(), game.gameName(), game.game());
+                games.updateGame(updatedGame);
+            } else {
+                throw new AlreadyTakenException();
+            }
+        } else if (playerColor.equals("BLACK")) {
+            if (game.blackUsername() == null){
+                GameData updatedGame = new GameData(gameID, game.whiteUsername(), username, game.gameName(), game.game());
+                games.updateGame(updatedGame);
+            } else {
+                throw new AlreadyTakenException();
+            }
+        } else {
+            throw new BadRequestException("bad request");
+        }
+        return new JoinGameResult();
+    }
+
+    public ListGamesResult listGames(String authToken) throws UnauthorizedException{
+        AuthData auth = auths.getAuth(authToken);
+        if (auth == null){
+            throw new UnauthorizedException("unauthorized");
+        }
+        return new ListGamesResult(games.listGames());
     }
 }

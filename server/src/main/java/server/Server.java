@@ -15,6 +15,11 @@ public class Server {
             return handler.registerHandler(request.body());
         });
 
+        Spark.delete("/db", (request, response) -> {
+            ClearHandler handler = new ClearHandler();
+            return handler.clearHandler(request.body());
+        });
+
         //This line initializes the server and can be removed once you have a functioning endpoint 
         Spark.init();
 

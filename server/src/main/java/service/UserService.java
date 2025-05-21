@@ -1,9 +1,6 @@
 package service;
 
-import dataaccess.AuthDAO;
-import dataaccess.MemoryAuthDAO;
-import dataaccess.MemoryUserDAO;
-import dataaccess.UserDAO;
+import dataaccess.*;
 import model.AuthData;
 import model.UserData;
 import java.util.UUID;
@@ -12,6 +9,7 @@ public class UserService {
 
     UserDAO users = new MemoryUserDAO();
     AuthDAO auths =  new MemoryAuthDAO();
+    GameDAO games = new MemoryGameDAO();
 
     public RegisterResult register(RegisterRequest registerRequest) throws AlreadyTakenException{
         String username = registerRequest.username();
@@ -36,4 +34,11 @@ public class UserService {
     }
 
     public void logout(LogoutRequest logoutRequest) {}
+
+    public ClearResult clear(ClearRequest clearRequest){
+        users.clear();
+        auths.clear();
+        games.clear();
+        return new ClearResult();
+    }
 }

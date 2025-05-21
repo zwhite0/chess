@@ -16,8 +16,8 @@ public class LogoutHandler {
 
     public String logoutHandler(String json) {
         UserService newLogout = new UserService(null, auths, null);
-        var serializer = new Gson();
-        LogoutRequest logoutRequest = serializer.fromJson(json, LogoutRequest.class);
+       var serializer = new Gson();
+        LogoutRequest logoutRequest = new LogoutRequest(json);
         LogoutResult logoutResult = newLogout.logout(logoutRequest);
         return serializer.toJson(logoutResult);
     }

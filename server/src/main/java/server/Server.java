@@ -61,7 +61,7 @@ public class Server {
         Spark.delete("/session", (request, response) -> {
             LogoutHandler handler = new LogoutHandler(auths);
             try {
-                return handler.logoutHandler(request.headers("authorization: "));
+                return handler.logoutHandler(request.headers("authorization"));
             } catch (UnauthorizedException e){
                 response.status(401);
                 Gson gson = new Gson();
@@ -74,6 +74,25 @@ public class Server {
         Spark.delete("/db", (request, response) -> {
             ClearHandler handler = new ClearHandler(users, auths, games);
             return handler.clearHandler(request.body());
+        });
+
+        Spark.post("/game", (request, response) -> {
+           CreateGameHandler handler = new CreateGameHandler(auths, games);
+           try {
+               return handler.createGameHandler(request.headers("authorization"),request.body());
+           } catch (UnauthorizedException e){
+               response.status(401);
+               Gson gson = new Gson();
+               ErrorResponse message = new ErrorResponse("Error: unauthorized");
+               String json = gson.toJson(message);
+               return json;
+           } catch (BadRequestException e){
+               response.status(400);
+               Gson gson = new Gson();
+               ErrorResponse message = new ErrorResponse("Error: bad request");
+               String json = gson.toJson(message);
+               return json;
+           }
         });
 
         //This line initializes the server and can be removed once you have a functioning endpoint 

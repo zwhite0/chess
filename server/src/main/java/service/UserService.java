@@ -11,6 +11,11 @@ public class UserService {
     AuthDAO auths =  new MemoryAuthDAO();
     GameDAO games = new MemoryGameDAO();
 
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
+    }
+
     public RegisterResult register(RegisterRequest registerRequest) throws AlreadyTakenException, BadRequestException{
         String username = registerRequest.username();
         String password = registerRequest.password();
@@ -30,7 +35,18 @@ public class UserService {
     }
 
     public LoginResult login(LoginRequest loginRequest) {
-        return new LoginResult(null,null);
+        String username = loginRequest.username();
+        String password = loginRequest.password();
+        if (username == null || password == null){
+            throw new BadRequestException("bad request");
+        }
+        UserData user = users.getUser(username);
+        if (user == null || ! password.equals(user.password())){
+            throw new UnauthorizedException("unauthorized");
+        }
+        String newAuth = UUID.randomUUID().toString();
+        auths.createAuth(new AuthData(newAuth, username));
+        return new LoginResult(username,newAuth);
     }
 
     public void logout(LogoutRequest logoutRequest) {}

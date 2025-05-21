@@ -11,10 +11,13 @@ public class UserService {
     AuthDAO auths =  new MemoryAuthDAO();
     GameDAO games = new MemoryGameDAO();
 
-    public RegisterResult register(RegisterRequest registerRequest) throws AlreadyTakenException{
+    public RegisterResult register(RegisterRequest registerRequest) throws AlreadyTakenException, BadRequestException{
         String username = registerRequest.username();
         String password = registerRequest.password();
         String email = registerRequest.email();
+        if (username == null || password == null || email == null){
+            throw new BadRequestException("bad request");
+        }
         UserData user = users.getUser(username);
         if (user != null){
             throw new AlreadyTakenException();

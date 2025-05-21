@@ -2,6 +2,7 @@ package server;
 
 import com.google.gson.Gson;
 import service.AlreadyTakenException;
+import service.BadRequestException;
 import service.ErrorResponse;
 import spark.*;
 
@@ -21,6 +22,12 @@ public class Server {
                 response.status(403);
                 Gson gson = new Gson();
                 ErrorResponse message = new ErrorResponse("Error: already taken");
+                String json = gson.toJson(message);
+                return json;
+            } catch (BadRequestException e){
+                response.status(400);
+                Gson gson = new Gson();
+                ErrorResponse message = new ErrorResponse("Error: bad request");
                 String json = gson.toJson(message);
                 return json;
             }

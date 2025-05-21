@@ -59,12 +59,17 @@ public class UserService {
         return new LoginResult(username,newAuth);
     }
 
-    public void logout(LogoutRequest logoutRequest) throws UnauthorizedException {
-        String authToken = logoutRequest.authToken();
+    public LogoutResult logout(LogoutRequest logoutRequest) throws UnauthorizedException {
+        String authToken = null;
+        if (logoutRequest != null) {
+            authToken = logoutRequest.authToken();
+        }
         AuthData auth = auths.getAuth(authToken);
         if (auth == null){
             throw new UnauthorizedException("unauthorized");
         }
+        auths.deleteAuth(auth);
+        return new LogoutResult();
     }
 
     public ClearResult clear(ClearRequest clearRequest){

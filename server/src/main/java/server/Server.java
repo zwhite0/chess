@@ -58,6 +58,19 @@ public class Server {
             }
         });
 
+        Spark.delete("/session", (request, response) -> {
+            LogoutHandler handler = new LogoutHandler(auths);
+            try {
+                return handler.logoutHandler(request.headers("authorization: "));
+            } catch (UnauthorizedException e){
+                response.status(401);
+                Gson gson = new Gson();
+                ErrorResponse message = new ErrorResponse("Error: unauthorized");
+                String json = gson.toJson(message);
+                return json;
+            }
+        });
+
         Spark.delete("/db", (request, response) -> {
             ClearHandler handler = new ClearHandler(users, auths, games);
             return handler.clearHandler(request.body());

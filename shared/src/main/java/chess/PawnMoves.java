@@ -8,7 +8,7 @@ public class PawnMoves {
     PawnMoves() {
     }
 
-    public static Collection<ChessMove> PossiblePawnMoves(ChessBoard board, ChessPosition myPosition) {
+    public static Collection<ChessMove> possiblePawnMoves(ChessBoard board, ChessPosition myPosition) {
         Collection<ChessMove> movable_places = new ArrayList<>();
         int x = myPosition.getColumn();
         int y = myPosition.getRow();

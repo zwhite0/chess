@@ -7,7 +7,7 @@ public class BishopMoves {
 
     public BishopMoves(){}
 
-    public static Collection<ChessMove> PossibleBishopMoves(ChessBoard board, ChessPosition myPosition) {
+    public static Collection<ChessMove> possibleBishopMoves(ChessBoard board, ChessPosition myPosition) {
         Collection<ChessMove> movable_places = new ArrayList<>();
         int x = myPosition.getColumn();
         int y = myPosition.getRow();
@@ -19,7 +19,7 @@ public class BishopMoves {
             y++;
             currentIteration.setColumn(x);    //set the square we're currently looking at
             currentIteration.setRow(y);
-            cont = PieceMovesCalculator.CheckOtherPieces(board,myPosition,currentIteration,movable_places,null);
+            cont = PieceMovesCalculator.checkOtherPieces(board,myPosition,currentIteration,movable_places,null);
         }
 
         x = myPosition.getColumn();
@@ -31,7 +31,7 @@ public class BishopMoves {
             y--;
             currentIteration.setColumn(x);
             currentIteration.setRow(y);
-            cont = PieceMovesCalculator.CheckOtherPieces(board,myPosition,currentIteration,movable_places,null);
+            cont = PieceMovesCalculator.checkOtherPieces(board,myPosition,currentIteration,movable_places,null);
         }
 
         x = myPosition.getColumn();
@@ -43,7 +43,7 @@ public class BishopMoves {
             y--;
             currentIteration.setColumn(x);
             currentIteration.setRow(y);
-            cont = PieceMovesCalculator.CheckOtherPieces(board,myPosition,currentIteration,movable_places,null);
+            cont = PieceMovesCalculator.checkOtherPieces(board,myPosition,currentIteration,movable_places,null);
         }
 
         x = myPosition.getColumn();
@@ -55,7 +55,7 @@ public class BishopMoves {
             y++;
             currentIteration.setColumn(x);
             currentIteration.setRow(y);
-            cont = PieceMovesCalculator.CheckOtherPieces(board,myPosition,currentIteration,movable_places,null);
+            cont = PieceMovesCalculator.checkOtherPieces(board,myPosition,currentIteration,movable_places,null);
         }
         return movable_places;
     }

@@ -1,6 +1,5 @@
 package chess;
 
-import java.util.ArrayList;
 import java.util.Collection;
 
 public class PieceMovesCalculator {
@@ -11,28 +10,28 @@ public class PieceMovesCalculator {
     public static Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         ChessPiece moving_piece = board.getPiece(myPosition);
         if (moving_piece.getPieceType().equals(ChessPiece.PieceType.BISHOP)){
-            return BishopMoves.PossibleBishopMoves(board,myPosition);
+            return BishopMoves.possibleBishopMoves(board,myPosition);
         }
         if (moving_piece.getPieceType().equals(ChessPiece.PieceType.ROOK)){
-            return RookMoves.PossibleRookMoves(board,myPosition);
+            return RookMoves.possibleRookMoves(board,myPosition);
         }
         if (moving_piece.getPieceType().equals(ChessPiece.PieceType.QUEEN)) {
-            return QueenMoves.PossibleQueenMoves(board, myPosition);
+            return QueenMoves.possibleQueenMoves(board, myPosition);
         }
         if (moving_piece.getPieceType().equals(ChessPiece.PieceType.KNIGHT)) {
-            return KnightMoves.PossibleKnightMoves(board, myPosition);
+            return KnightMoves.possibleKnightMoves(board, myPosition);
         }
         if (moving_piece.getPieceType().equals(ChessPiece.PieceType.PAWN)){
-            return PawnMoves.PossiblePawnMoves(board,myPosition);
+            return PawnMoves.possiblePawnMoves(board,myPosition);
         }
         if (moving_piece.getPieceType().equals(ChessPiece.PieceType.KING)){
-            return KingMoves.PossibleKingMoves(board,myPosition);
+            return KingMoves.possibleKingMoves(board,myPosition);
         }
         return null;
     }
 
 
-    public static boolean CheckOtherPieces(ChessBoard board, ChessPosition myPosition, ChessPosition currentIteration, Collection<ChessMove> movable_places, ChessPiece.PieceType promotion){
+    public static boolean checkOtherPieces(ChessBoard board, ChessPosition myPosition, ChessPosition currentIteration, Collection<ChessMove> movable_places, ChessPiece.PieceType promotion){
         ChessPiece moving_piece = board.getPiece(myPosition);  //need moving piece so we know what color it is
         ChessPiece potential_move = board.getPiece(currentIteration);  //store a piece here to later check if there is a piece in this position
         int y = currentIteration.getRow();  //for creating a copy of currentIteration

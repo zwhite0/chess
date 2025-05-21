@@ -2,10 +2,7 @@ package server;
 
 import com.google.gson.Gson;
 import dataaccess.*;
-import service.AlreadyTakenException;
-import service.BadRequestException;
-import service.ErrorResponse;
-import service.UnauthorizedException;
+import service.*;
 import spark.*;
 
 public class Server {
@@ -115,6 +112,19 @@ public class Server {
                 response.status(403);
                 Gson gson = new Gson();
                 ErrorResponse message = new ErrorResponse("Error: already taken");
+                String json = gson.toJson(message);
+                return json;
+            }
+        });
+
+        Spark.get("/game", (request, response) -> {
+            ListGamesHandler handler = new ListGamesHandler(auths, games);
+            try {
+                return handler.listGamesHandler(request.headers("authorization"));
+            } catch (UnauthorizedException e){
+                response.status(401);
+                Gson gson = new Gson();
+                ErrorResponse message = new ErrorResponse("Error: unauthorized");
                 String json = gson.toJson(message);
                 return json;
             }

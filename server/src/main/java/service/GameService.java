@@ -82,7 +82,8 @@ public class GameService {
         return new JoinGameResult();
     }
 
-    public ListGamesResult listGames(String authToken) throws UnauthorizedException{
+    public ListGamesResult listGames(ListGamesRequest listGamesRequest) throws UnauthorizedException{
+        String authToken = listGamesRequest.authToken();
         AuthData auth = auths.getAuth(authToken);
         if (auth == null){
             throw new UnauthorizedException("unauthorized");

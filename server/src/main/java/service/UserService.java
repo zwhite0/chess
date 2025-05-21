@@ -15,12 +15,9 @@ public class UserService {
         String username = registerRequest.username();
         String password = registerRequest.password();
         String email = registerRequest.email();
-        UserData user = null;
-        if (users != null) {
-            user = users.getUser(username);
-        }
+        UserData user = users.getUser(username);
         if (user != null){
-            throw new AlreadyTakenException("Username already taken");
+            throw new AlreadyTakenException();
         } else {
         users.createUser(new UserData(username, password, email));
         String newAuth = UUID.randomUUID().toString();

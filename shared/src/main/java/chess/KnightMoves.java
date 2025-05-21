@@ -8,7 +8,7 @@ public class KnightMoves {
     public KnightMoves(){}
 
     public static Collection<ChessMove> possibleKnightMoves(ChessBoard board, ChessPosition myPosition) {
-        Collection<ChessMove> movable_places = new ArrayList<>();
+        Collection<ChessMove> movablePlaces = new ArrayList<>();
         int x = myPosition.getColumn();
         int y = myPosition.getRow();
         ChessPosition currentIteration = new ChessPosition(y,x);
@@ -18,13 +18,13 @@ public class KnightMoves {
         currentIteration.setRow(y);
         currentIteration.setColumn(x);
         if (x>0 && x<9 && y>0 && y<9) {
-            PieceMovesCalculator.checkOtherPieces(board, myPosition, currentIteration, movable_places, null);
+            PieceMovesCalculator.checkOtherPieces(board, myPosition, currentIteration, movablePlaces, null);
         }
 
         x = x - 2;
         currentIteration.setColumn(x);
         if (x>0 && x<9 && y>0 && y<9) {
-            PieceMovesCalculator.checkOtherPieces(board, myPosition, currentIteration, movable_places, null);
+            PieceMovesCalculator.checkOtherPieces(board, myPosition, currentIteration, movablePlaces, null);
         }
 
         y--;
@@ -32,13 +32,13 @@ public class KnightMoves {
         currentIteration.setRow(y);
         currentIteration.setColumn(x);
         if (x>0 && x<9 && y>0 && y<9) {
-            PieceMovesCalculator.checkOtherPieces(board, myPosition, currentIteration, movable_places, null);
+            PieceMovesCalculator.checkOtherPieces(board, myPosition, currentIteration, movablePlaces, null);
         }
 
         y = y-2;
         currentIteration.setRow(y);
         if (x>0 && x<9 && y>0 && y<9) {
-            PieceMovesCalculator.checkOtherPieces(board, myPosition, currentIteration, movable_places, null);
+            PieceMovesCalculator.checkOtherPieces(board, myPosition, currentIteration, movablePlaces, null);
         }
 
         x++;
@@ -46,13 +46,13 @@ public class KnightMoves {
         currentIteration.setRow(y);
         currentIteration.setColumn(x);
         if (x>0 && x<9 && y>0 && y<9) {
-            PieceMovesCalculator.checkOtherPieces(board, myPosition, currentIteration, movable_places, null);
+            PieceMovesCalculator.checkOtherPieces(board, myPosition, currentIteration, movablePlaces, null);
         }
 
         x = x + 2;
         currentIteration.setColumn(x);
         if (x>0 && x<9 && y>0 && y<9) {
-            PieceMovesCalculator.checkOtherPieces(board, myPosition, currentIteration, movable_places, null);
+            PieceMovesCalculator.checkOtherPieces(board, myPosition, currentIteration, movablePlaces, null);
         }
 
         y++;
@@ -60,16 +60,16 @@ public class KnightMoves {
         currentIteration.setRow(y);
         currentIteration.setColumn(x);
         if (x>0 && x<9 && y>0 && y<9) {
-            PieceMovesCalculator.checkOtherPieces(board, myPosition, currentIteration, movable_places, null);
+            PieceMovesCalculator.checkOtherPieces(board, myPosition, currentIteration, movablePlaces, null);
         }
 
         y = y + 2;
         currentIteration.setRow(y);
         if (x>0 && x<9 && y>0 && y<9) {
-            PieceMovesCalculator.checkOtherPieces(board, myPosition, currentIteration, movable_places, null);
+            PieceMovesCalculator.checkOtherPieces(board, myPosition, currentIteration, movablePlaces, null);
         }
 
-        return movable_places;
+        return movablePlaces;
     }
 }
 

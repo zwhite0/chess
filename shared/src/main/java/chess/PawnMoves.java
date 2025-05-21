@@ -9,7 +9,7 @@ public class PawnMoves {
     }
 
     public static Collection<ChessMove> possiblePawnMoves(ChessBoard board, ChessPosition myPosition) {
-        Collection<ChessMove> movable_places = new ArrayList<>();
+        Collection<ChessMove> movablePlaces = new ArrayList<>();
         int x = myPosition.getColumn();
         int y = myPosition.getRow();
         ChessPosition currentIteration = new ChessPosition(y, x);
@@ -26,7 +26,7 @@ public class PawnMoves {
             //move forward 1 logic
             if (potential_move == null) {  //what to do if the potential space the piece could move to is empty
                 ChessPosition movablePos = new ChessPosition(y, x);  //create copy of currentIteration so copy doesn't update when we don't want it to
-                movable_places.add(new ChessMove(myPosition, movablePos, null));  //add copy to list of possible moves
+                movablePlaces.add(new ChessMove(myPosition, movablePos, null));  //add copy to list of possible moves
             }
             //attack right logic
             x++;
@@ -35,7 +35,7 @@ public class PawnMoves {
                 potential_move = board.getPiece(currentIteration);
                 if (potential_move != null && !potential_move.getTeamColor().equals(movingPawn.getTeamColor())) {
                     ChessPosition movablePos = new ChessPosition(y, x);  //create copy of currentIteration so copy doesn't update when we don't want it to
-                    movable_places.add(new ChessMove(myPosition, movablePos, null));  //add copy to list of possible moves
+                    movablePlaces.add(new ChessMove(myPosition, movablePos, null));  //add copy to list of possible moves
                 }
             }
             //attack left logic
@@ -45,7 +45,7 @@ public class PawnMoves {
                 potential_move = board.getPiece(currentIteration);
                 if (potential_move != null && !potential_move.getTeamColor().equals(movingPawn.getTeamColor())) {
                     ChessPosition movablePos = new ChessPosition(y, x);  //create copy of currentIteration so copy doesn't update when we don't want it to
-                    movable_places.add(new ChessMove(myPosition, movablePos, null));  //add copy to list of possible moves
+                    movablePlaces.add(new ChessMove(myPosition, movablePos, null));  //add copy to list of possible moves
                 }
             }
             //move forward 2 if on starting location logic
@@ -63,7 +63,7 @@ public class PawnMoves {
                 potential_move = board.getPiece(currentIteration);
                 if (potential_move == null) {  //what to do if the potential space the piece could move to is empty
                     ChessPosition movablePos = new ChessPosition(y, x);  //create copy of currentIteration so copy doesn't update when we don't want it to
-                    movable_places.add(new ChessMove(myPosition, movablePos, null));  //add copy to list of possible moves
+                    movablePlaces.add(new ChessMove(myPosition, movablePos, null));  //add copy to list of possible moves
                 }
             }
         }
@@ -73,10 +73,10 @@ public class PawnMoves {
             //move forward 1 logic
             if (potential_move == null) {  //what to do if the potential space the piece could move to is empty
                 ChessPosition movablePos = new ChessPosition(y, x);  //create copy of currentIteration so copy doesn't update when we don't want it to
-                movable_places.add(new ChessMove(myPosition, movablePos, ChessPiece.PieceType.KNIGHT));
-                movable_places.add(new ChessMove(myPosition, movablePos, ChessPiece.PieceType.BISHOP));
-                movable_places.add(new ChessMove(myPosition, movablePos, ChessPiece.PieceType.ROOK));
-                movable_places.add(new ChessMove(myPosition, movablePos, ChessPiece.PieceType.QUEEN));//add copy to list of possible moves
+                movablePlaces.add(new ChessMove(myPosition, movablePos, ChessPiece.PieceType.KNIGHT));
+                movablePlaces.add(new ChessMove(myPosition, movablePos, ChessPiece.PieceType.BISHOP));
+                movablePlaces.add(new ChessMove(myPosition, movablePos, ChessPiece.PieceType.ROOK));
+                movablePlaces.add(new ChessMove(myPosition, movablePos, ChessPiece.PieceType.QUEEN));//add copy to list of possible moves
             }
             //attack right logic
             x++;
@@ -85,10 +85,10 @@ public class PawnMoves {
                 potential_move = board.getPiece(currentIteration);
                 if (potential_move != null && !potential_move.getTeamColor().equals(movingPawn.getTeamColor())) {
                     ChessPosition movablePos = new ChessPosition(y, x);  //create copy of currentIteration so copy doesn't update when we don't want it to
-                    movable_places.add(new ChessMove(myPosition, movablePos, ChessPiece.PieceType.KNIGHT));
-                    movable_places.add(new ChessMove(myPosition, movablePos, ChessPiece.PieceType.BISHOP));
-                    movable_places.add(new ChessMove(myPosition, movablePos, ChessPiece.PieceType.ROOK));
-                    movable_places.add(new ChessMove(myPosition, movablePos, ChessPiece.PieceType.QUEEN));  //add copy to list of possible moves
+                    movablePlaces.add(new ChessMove(myPosition, movablePos, ChessPiece.PieceType.KNIGHT));
+                    movablePlaces.add(new ChessMove(myPosition, movablePos, ChessPiece.PieceType.BISHOP));
+                    movablePlaces.add(new ChessMove(myPosition, movablePos, ChessPiece.PieceType.ROOK));
+                    movablePlaces.add(new ChessMove(myPosition, movablePos, ChessPiece.PieceType.QUEEN));  //add copy to list of possible moves
                 }
             }
             //attack left logic
@@ -98,13 +98,13 @@ public class PawnMoves {
                 potential_move = board.getPiece(currentIteration);
                 if (potential_move != null && !potential_move.getTeamColor().equals(movingPawn.getTeamColor())) {
                     ChessPosition movablePos = new ChessPosition(y, x);  //create copy of currentIteration so copy doesn't update when we don't want it to
-                    movable_places.add(new ChessMove(myPosition, movablePos, ChessPiece.PieceType.KNIGHT));
-                    movable_places.add(new ChessMove(myPosition, movablePos, ChessPiece.PieceType.BISHOP));
-                    movable_places.add(new ChessMove(myPosition, movablePos, ChessPiece.PieceType.ROOK));
-                    movable_places.add(new ChessMove(myPosition, movablePos, ChessPiece.PieceType.QUEEN));  //add copy to list of possible moves
+                    movablePlaces.add(new ChessMove(myPosition, movablePos, ChessPiece.PieceType.KNIGHT));
+                    movablePlaces.add(new ChessMove(myPosition, movablePos, ChessPiece.PieceType.BISHOP));
+                    movablePlaces.add(new ChessMove(myPosition, movablePos, ChessPiece.PieceType.ROOK));
+                    movablePlaces.add(new ChessMove(myPosition, movablePos, ChessPiece.PieceType.QUEEN));  //add copy to list of possible moves
                 }
             }
         }
-        return movable_places;
+        return movablePlaces;
     }
 }

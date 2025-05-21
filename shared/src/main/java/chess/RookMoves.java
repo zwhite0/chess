@@ -8,7 +8,7 @@ public class RookMoves {
     public RookMoves(){}
 
     public static Collection<ChessMove> possibleRookMoves(ChessBoard board, ChessPosition myPosition) {
-        Collection<ChessMove> movable_places = new ArrayList<>();
+        Collection<ChessMove> movablePlaces = new ArrayList<>();
         int x = myPosition.getColumn();
         int y = myPosition.getRow();
         ChessPosition currentIteration = new ChessPosition(y,x);
@@ -18,7 +18,7 @@ public class RookMoves {
         while (x<8 && cont){  //if at 8 then we just checked the edge and don't want to go further
             x++; //increment
             currentIteration.setColumn(x); //change the space we are looking at to check if there is currently a piece there
-            cont = PieceMovesCalculator.checkOtherPieces(board,myPosition,currentIteration,movable_places,null); //checks if space has a piece there and adds move to list if appropriate
+            cont = PieceMovesCalculator.checkOtherPieces(board,myPosition,currentIteration, movablePlaces,null); //checks if space has a piece there and adds move to list if appropriate
         }
 
         x = myPosition.getColumn(); //reset x to where the rook is
@@ -28,7 +28,7 @@ public class RookMoves {
         while (x>1 && cont){  //if at 1 then we just checked the edge and don't want to go further
             x--;  //deincrement
             currentIteration.setColumn(x);
-            cont = PieceMovesCalculator.checkOtherPieces(board,myPosition,currentIteration,movable_places,null);
+            cont = PieceMovesCalculator.checkOtherPieces(board,myPosition,currentIteration, movablePlaces,null);
         }
 
         x = myPosition.getColumn();
@@ -38,7 +38,7 @@ public class RookMoves {
         while (y>1 && cont){
             y--;
             currentIteration.setRow(y);
-            cont = PieceMovesCalculator.checkOtherPieces(board,myPosition,currentIteration,movable_places,null);
+            cont = PieceMovesCalculator.checkOtherPieces(board,myPosition,currentIteration, movablePlaces,null);
         }
         y = myPosition.getRow();
         cont = true;
@@ -46,8 +46,8 @@ public class RookMoves {
         while (y<8 && cont){
             y++;
             currentIteration.setRow(y);
-            cont = PieceMovesCalculator.checkOtherPieces(board,myPosition,currentIteration,movable_places,null);
+            cont = PieceMovesCalculator.checkOtherPieces(board,myPosition,currentIteration, movablePlaces,null);
         }
-        return movable_places;
+        return movablePlaces;
     }
 }

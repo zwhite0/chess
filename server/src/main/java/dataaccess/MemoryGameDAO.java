@@ -9,7 +9,7 @@ import java.util.List;
 
 public class MemoryGameDAO implements GameDAO{
 
-    private static final HashMap<Integer, GameData> games = new HashMap<>();
+    HashMap<Integer, GameData> games = new HashMap<>();
 
     @Override
     public void createGame(GameData game) {

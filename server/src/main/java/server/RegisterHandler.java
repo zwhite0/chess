@@ -3,8 +3,8 @@ package server;
 import com.google.gson.Gson;
 import dataaccess.AuthDAO;
 import dataaccess.UserDAO;
-import service.RequestsAndResults.RegisterRequest;
-import service.RequestsAndResults.RegisterResult;
+import service.requestsandresults.RegisterRequest;
+import service.requestsandresults.RegisterResult;
 import service.UserService;
 
 public class RegisterHandler {

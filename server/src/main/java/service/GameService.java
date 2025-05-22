@@ -6,7 +6,7 @@ import dataaccess.GameDAO;
 import dataaccess.UserDAO;
 import model.AuthData;
 import model.GameData;
-import service.RequestsAndResults.*;
+import service.requestsandresults.*;
 
 public class GameService {
 

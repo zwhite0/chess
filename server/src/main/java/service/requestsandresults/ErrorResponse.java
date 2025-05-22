@@ -1,4 +1,4 @@
-package service.RequestsAndResults;
+package service.requestsandresults;
 
 public record ErrorResponse(String message) {
 }

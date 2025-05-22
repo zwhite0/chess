@@ -132,7 +132,8 @@ public class ChessGame {
             }
         }
 
-        if (currentPiece == null || isInCheck(currentPiece.getTeamColor()) || ! isInValidMoves || ! currentPiece.getTeamColor().equals(getTeamTurn())){
+        if (currentPiece == null || isInCheck(currentPiece.getTeamColor()) || ! isInValidMoves ||
+                ! currentPiece.getTeamColor().equals(getTeamTurn())){
             throw new InvalidMoveException();
         }
 
@@ -178,7 +179,8 @@ public class ChessGame {
         return false;
     }
 
-    private static boolean checkForChecks(int x, int y, ChessPiece square, TeamColor teamColor, Collection<ChessMove> movablePlaces, ChessBoard currentBoard, ChessPosition kingLocation){
+    private static boolean checkForChecks(int x, int y, ChessPiece square, TeamColor teamColor,
+                                          Collection<ChessMove> movablePlaces, ChessBoard currentBoard, ChessPosition kingLocation){
         if (square != null && ! square.getTeamColor().equals(teamColor)){
             movablePlaces.clear();
             movablePlaces = square.pieceMoves(currentBoard,new ChessPosition(y,x));

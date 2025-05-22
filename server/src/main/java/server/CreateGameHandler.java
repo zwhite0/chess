@@ -4,8 +4,8 @@ import com.google.gson.Gson;
 import dataaccess.AuthDAO;
 import dataaccess.GameDAO;
 import service.*;
-import service.RequestsAndResults.CreateGameRequest;
-import service.RequestsAndResults.CreateGameResult;
+import service.requestsandresults.CreateGameRequest;
+import service.requestsandresults.CreateGameResult;
 
 public class CreateGameHandler {
 

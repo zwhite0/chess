@@ -22,17 +22,9 @@ public class Server {
             try {
                 return handler.registerHandler(request.body());
             } catch (AlreadyTakenException e){
-                response.status(403);
-                Gson gson = new Gson();
-                ErrorResponse message = new ErrorResponse("Error: already taken");
-                String json = gson.toJson(message);
-                return json;
+                return catchExceptions(response, 403,"Error: already taken");
             } catch (BadRequestException e){
-                response.status(400);
-                Gson gson = new Gson();
-                ErrorResponse message = new ErrorResponse("Error: bad request");
-                String json = gson.toJson(message);
-                return json;
+                return catchExceptions(response, 400,"Error: bad request");
             }
         });
 
@@ -41,17 +33,9 @@ public class Server {
             try {
                 return handler.loginHandler(request.body());
             } catch (BadRequestException e){
-                response.status(400);
-                Gson gson = new Gson();
-                ErrorResponse message = new ErrorResponse("Error: bad request");
-                String json = gson.toJson(message);
-                return json;
+                return catchExceptions(response, 400,"Error: bad request");
             } catch (UnauthorizedException e){
-                response.status(401);
-                Gson gson = new Gson();
-                ErrorResponse message = new ErrorResponse("Error: unauthorized");
-                String json = gson.toJson(message);
-                return json;
+                return catchExceptions(response, 401,"Error: unauthorized");
             }
         });
 
@@ -60,11 +44,7 @@ public class Server {
             try {
                 return handler.logoutHandler(request.headers("authorization"));
             } catch (UnauthorizedException e){
-                response.status(401);
-                Gson gson = new Gson();
-                ErrorResponse message = new ErrorResponse("Error: unauthorized");
-                String json = gson.toJson(message);
-                return json;
+                return catchExceptions(response, 401,"Error: unauthorized");
             }
         });
 
@@ -78,17 +58,9 @@ public class Server {
            try {
                return handler.createGameHandler(request.headers("authorization"),request.body());
            } catch (UnauthorizedException e){
-               response.status(401);
-               Gson gson = new Gson();
-               ErrorResponse message = new ErrorResponse("Error: unauthorized");
-               String json = gson.toJson(message);
-               return json;
+               return catchExceptions(response, 401,"Error: unauthorized");
            } catch (BadRequestException e){
-               response.status(400);
-               Gson gson = new Gson();
-               ErrorResponse message = new ErrorResponse("Error: bad request");
-               String json = gson.toJson(message);
-               return json;
+               return catchExceptions(response, 400,"Error: bad request");
            }
         });
 
@@ -97,23 +69,11 @@ public class Server {
             try {
                 return handler.joinGameHandler(request.headers("authorization"), request.body());
             } catch (UnauthorizedException e){
-                response.status(401);
-                Gson gson = new Gson();
-                ErrorResponse message = new ErrorResponse("Error: unauthorized");
-                String json = gson.toJson(message);
-                return json;
+                return catchExceptions(response, 401,"Error: unauthorized");
             } catch (BadRequestException e){
-                response.status(400);
-                Gson gson = new Gson();
-                ErrorResponse message = new ErrorResponse("Error: bad request");
-                String json = gson.toJson(message);
-                return json;
+                return catchExceptions(response, 400,"Error: bad request");
             } catch (AlreadyTakenException e){
-                response.status(403);
-                Gson gson = new Gson();
-                ErrorResponse message = new ErrorResponse("Error: already taken");
-                String json = gson.toJson(message);
-                return json;
+                return catchExceptions(response, 403,"Error: already taken");
             }
         });
 
@@ -122,11 +82,7 @@ public class Server {
             try {
                 return handler.listGamesHandler(request.headers("authorization"));
             } catch (UnauthorizedException e){
-                response.status(401);
-                Gson gson = new Gson();
-                ErrorResponse message = new ErrorResponse("Error: unauthorized");
-                String json = gson.toJson(message);
-                return json;
+                return catchExceptions(response, 401,"Error: unauthorized");
             }
         });
 
@@ -135,6 +91,13 @@ public class Server {
 
         Spark.awaitInitialization();
         return Spark.port();
+    }
+
+    private static String catchExceptions(spark.Response response, int statusCode, String errorMessage){
+        response.status(statusCode);
+        Gson gson = new Gson();
+        ErrorResponse message = new ErrorResponse("Error: unauthorized");
+        return gson.toJson(message);
     }
 
     public void stop() {

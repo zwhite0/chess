@@ -72,11 +72,7 @@ public class PawnMoves {
         if (myPosition.getRow() == 7 && movingPawn.getTeamColor().equals(ChessGame.TeamColor.WHITE) || myPosition.getRow() == 2 && movingPawn.getTeamColor().equals(ChessGame.TeamColor.BLACK)) {
             //move forward 1 logic
             if (potentialMove == null) {  //what to do if the potential space the piece could move to is empty
-                ChessPosition movablePos = new ChessPosition(y, x);  //create copy of currentIteration so copy doesn't update when we don't want it to
-                movablePlaces.add(new ChessMove(myPosition, movablePos, ChessPiece.PieceType.KNIGHT));
-                movablePlaces.add(new ChessMove(myPosition, movablePos, ChessPiece.PieceType.BISHOP));
-                movablePlaces.add(new ChessMove(myPosition, movablePos, ChessPiece.PieceType.ROOK));
-                movablePlaces.add(new ChessMove(myPosition, movablePos, ChessPiece.PieceType.QUEEN));//add copy to list of possible moves
+                addAllPromotions(x,y,movablePlaces,myPosition);
             }
             //attack right logic
             x++;
@@ -84,11 +80,7 @@ public class PawnMoves {
                 currentIteration.setColumn(x);
                 potentialMove = board.getPiece(currentIteration);
                 if (potentialMove != null && !potentialMove.getTeamColor().equals(movingPawn.getTeamColor())) {
-                    ChessPosition movablePos = new ChessPosition(y, x);  //create copy of currentIteration so copy doesn't update when we don't want it to
-                    movablePlaces.add(new ChessMove(myPosition, movablePos, ChessPiece.PieceType.KNIGHT));
-                    movablePlaces.add(new ChessMove(myPosition, movablePos, ChessPiece.PieceType.BISHOP));
-                    movablePlaces.add(new ChessMove(myPosition, movablePos, ChessPiece.PieceType.ROOK));
-                    movablePlaces.add(new ChessMove(myPosition, movablePos, ChessPiece.PieceType.QUEEN));  //add copy to list of possible moves
+                    addAllPromotions(x,y,movablePlaces,myPosition);
                 }
             }
             //attack left logic
@@ -97,14 +89,18 @@ public class PawnMoves {
                 currentIteration.setColumn(x);
                 potentialMove = board.getPiece(currentIteration);
                 if (potentialMove != null && !potentialMove.getTeamColor().equals(movingPawn.getTeamColor())) {
-                    ChessPosition movablePos = new ChessPosition(y, x);  //create copy of currentIteration so copy doesn't update when we don't want it to
-                    movablePlaces.add(new ChessMove(myPosition, movablePos, ChessPiece.PieceType.KNIGHT));
-                    movablePlaces.add(new ChessMove(myPosition, movablePos, ChessPiece.PieceType.BISHOP));
-                    movablePlaces.add(new ChessMove(myPosition, movablePos, ChessPiece.PieceType.ROOK));
-                    movablePlaces.add(new ChessMove(myPosition, movablePos, ChessPiece.PieceType.QUEEN));  //add copy to list of possible moves
+                    addAllPromotions(x,y,movablePlaces,myPosition);
                 }
             }
         }
         return movablePlaces;
+    }
+
+    private static void addAllPromotions(int x, int y, Collection<ChessMove> movablePlaces, ChessPosition myPosition){
+        ChessPosition movablePos = new ChessPosition(y, x);  //create copy of currentIteration so copy doesn't update when we don't want it to
+        movablePlaces.add(new ChessMove(myPosition, movablePos, ChessPiece.PieceType.KNIGHT));
+        movablePlaces.add(new ChessMove(myPosition, movablePos, ChessPiece.PieceType.BISHOP));
+        movablePlaces.add(new ChessMove(myPosition, movablePos, ChessPiece.PieceType.ROOK));
+        movablePlaces.add(new ChessMove(myPosition, movablePos, ChessPiece.PieceType.QUEEN));
     }
 }

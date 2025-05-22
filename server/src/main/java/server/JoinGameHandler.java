@@ -4,8 +4,8 @@ import com.google.gson.Gson;
 import dataaccess.AuthDAO;
 import dataaccess.GameDAO;
 import service.GameService;
-import service.JoinGameRequest;
-import service.JoinGameResult;
+import service.RequestsAndResults.JoinGameRequest;
+import service.RequestsAndResults.JoinGameResult;
 
 public class JoinGameHandler {
 

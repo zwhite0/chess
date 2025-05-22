@@ -3,6 +3,7 @@ package server;
 import com.google.gson.Gson;
 import dataaccess.*;
 import service.*;
+import service.RequestsAndResults.ErrorResponse;
 import spark.*;
 
 public class Server {

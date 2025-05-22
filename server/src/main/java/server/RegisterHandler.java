@@ -2,11 +2,9 @@ package server;
 
 import com.google.gson.Gson;
 import dataaccess.AuthDAO;
-import dataaccess.MemoryAuthDAO;
-import dataaccess.MemoryUserDAO;
 import dataaccess.UserDAO;
-import service.RegisterRequest;
-import service.RegisterResult;
+import service.RequestsAndResults.RegisterRequest;
+import service.RequestsAndResults.RegisterResult;
 import service.UserService;
 
 public class RegisterHandler {

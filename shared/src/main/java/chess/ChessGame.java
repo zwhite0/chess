@@ -170,15 +170,21 @@ public class ChessGame {
             x=0;
             for (ChessPiece square : row){
                 x++;
-                if (square != null && ! square.getTeamColor().equals(teamColor)){
-                    movablePlaces.clear();
-                    movablePlaces = square.pieceMoves(currentBoard,new ChessPosition(y,x));
-                    for (ChessMove move : movablePlaces){
-                        if (move.getEndPosition().equals(kingLocation)){
-                            return true;
-                        }
-                    }
+                if (checkForChecks(x,y,square,teamColor,movablePlaces,currentBoard,kingLocation)){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
+    private static boolean checkForChecks(int x, int y, ChessPiece square, TeamColor teamColor, Collection<ChessMove> movablePlaces, ChessBoard currentBoard, ChessPosition kingLocation){
+        if (square != null && ! square.getTeamColor().equals(teamColor)){
+            movablePlaces.clear();
+            movablePlaces = square.pieceMoves(currentBoard,new ChessPosition(y,x));
+            for (ChessMove move : movablePlaces){
+                if (move.getEndPosition().equals(kingLocation)){
+                    return true;
                 }
             }
         }

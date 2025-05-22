@@ -31,7 +31,8 @@ public class PieceMovesCalculator {
     }
 
 
-    public static boolean checkOtherPieces(ChessBoard board, ChessPosition myPosition, ChessPosition currentIteration, Collection<ChessMove> movablePlaces, ChessPiece.PieceType promotion){
+    public static boolean checkOtherPieces(ChessBoard board, ChessPosition myPosition,
+                                           ChessPosition currentIteration, Collection<ChessMove> movablePlaces, ChessPiece.PieceType promotion){
         ChessPiece movingPiece = board.getPiece(myPosition);  //need moving piece so we know what color it is
         ChessPiece potentialMove = board.getPiece(currentIteration);  //store a piece here to later check if there is a piece in this position
         int y = currentIteration.getRow();  //for creating a copy of currentIteration
@@ -40,7 +41,8 @@ public class PieceMovesCalculator {
         if (potentialMove == null) {  //what to do if the potential space the piece could move to is empty
             ChessPosition movablePos = new ChessPosition(y,x);  //create copy of currentIteration so copy doesn't update when we don't want it to
             movablePlaces.add(new ChessMove(myPosition, movablePos, promotion));  //add copy to list of possible moves
-        } else if (potentialMove.getTeamColor().equals(movingPiece.getTeamColor())) { //what to do if there is a piece in the spot, and it is the same color
+        } else if (potentialMove.getTeamColor().equals(movingPiece.getTeamColor())) {
+            //what to do if there is a piece in the spot, and it is the same color
             cont = false;  //piece can't move here, stops the iteration from continuing
         } else {  //what to do if there is a piece of opposite color in currentIteration
             ChessPosition movablePos = new ChessPosition(y,x); //create copy
@@ -111,7 +113,8 @@ public class PieceMovesCalculator {
         while (x<8 && cont){  //if at 8 then we just checked the edge and don't want to go further
             x++; //increment
             currentIteration.setColumn(x); //change the space we are looking at to check if there is currently a piece there
-            cont = PieceMovesCalculator.checkOtherPieces(board,myPosition,currentIteration, movablePlaces,null); //checks if space has a piece there and adds move to list if appropriate
+            //checks if space has a piece there and adds move to list if appropriate
+            cont = PieceMovesCalculator.checkOtherPieces(board,myPosition,currentIteration, movablePlaces,null);
         }
 
         x = myPosition.getColumn(); //reset x to where the rook is

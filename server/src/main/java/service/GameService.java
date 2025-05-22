@@ -6,8 +6,7 @@ import dataaccess.GameDAO;
 import dataaccess.UserDAO;
 import model.AuthData;
 import model.GameData;
-
-import java.util.Collection;
+import service.RequestsAndResults.*;
 
 public class GameService {
 
@@ -47,7 +46,8 @@ public class GameService {
         }
     }
 
-    public JoinGameResult joinGame(JoinGameRequest joinGameRequest, String authToken) throws BadRequestException, UnauthorizedException, AlreadyTakenException{
+    public JoinGameResult joinGame(JoinGameRequest joinGameRequest, String authToken)
+            throws BadRequestException, UnauthorizedException, AlreadyTakenException{
         String playerColor = joinGameRequest.playerColor();
         Integer gameID = joinGameRequest.gameID();
         if (playerColor == null || gameID == null){

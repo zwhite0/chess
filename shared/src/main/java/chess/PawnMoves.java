@@ -67,23 +67,29 @@ public class PawnMoves {
             //attack right logic
             x++;
             if (x < 9) {
-                currentIteration.setColumn(x);
-                potentialMove = board.getPiece(currentIteration);
-                if (potentialMove != null && !potentialMove.getTeamColor().equals(movingPawn.getTeamColor())) {
+                if (checkAttackedPiece(x,currentIteration,potentialMove,board,movingPawn)){
                     addAllPromotions(x,y,movablePlaces,myPosition);
                 }
             }
             //attack left logic
             x = x - 2;
             if (x > 0) {
-                currentIteration.setColumn(x);
-                potentialMove = board.getPiece(currentIteration);
-                if (potentialMove != null && !potentialMove.getTeamColor().equals(movingPawn.getTeamColor())) {
+                if (checkAttackedPiece(x,currentIteration,potentialMove,board,movingPawn)){
                     addAllPromotions(x,y,movablePlaces,myPosition);
                 }
             }
         }
         return movablePlaces;
+    }
+
+    private static boolean checkAttackedPiece(int x, ChessPosition currentIteration, ChessPiece potentialMove, ChessBoard board, ChessPiece movingPawn){
+        currentIteration.setColumn(x);
+        potentialMove = board.getPiece(currentIteration);
+        if (potentialMove != null && !potentialMove.getTeamColor().equals(movingPawn.getTeamColor())) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     private static void addAllPromotions(int x, int y, Collection<ChessMove> movablePlaces, ChessPosition myPosition){

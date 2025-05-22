@@ -3,6 +3,8 @@ package service;
 import dataaccess.*;
 import model.AuthData;
 import model.UserData;
+import service.RequestsAndResults.*;
+
 import java.util.UUID;
 
 public class UserService {

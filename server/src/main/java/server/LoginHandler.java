@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import dataaccess.AuthDAO;
 import dataaccess.UserDAO;
 import service.*;
+import service.RequestsAndResults.LoginRequest;
+import service.RequestsAndResults.LoginResult;
 
 public class LoginHandler {
 

@@ -9,54 +9,7 @@ public class BishopMoves {
 
     public static Collection<ChessMove> possibleBishopMoves(ChessBoard board, ChessPosition myPosition) {
         Collection<ChessMove> movablePlaces = new ArrayList<>();
-        int x = myPosition.getColumn();
-        int y = myPosition.getRow();
-        ChessPosition currentIteration = new ChessPosition(y,x);
-        boolean cont = true;
-
-        while (x<8 && y<8 && cont){  //if at 8 then we're at the edge already and don't want to go any further
-            x++;    //increment to new diagonal square
-            y++;
-            currentIteration.setColumn(x);    //set the square we're currently looking at
-            currentIteration.setRow(y);
-            cont = PieceMovesCalculator.checkOtherPieces(board,myPosition,currentIteration, movablePlaces,null);
-        }
-
-        x = myPosition.getColumn();
-        y = myPosition.getRow();
-        cont = true;
-
-        while (x>1 && y>1 && cont){
-            x--;
-            y--;
-            currentIteration.setColumn(x);
-            currentIteration.setRow(y);
-            cont = PieceMovesCalculator.checkOtherPieces(board,myPosition,currentIteration, movablePlaces,null);
-        }
-
-        x = myPosition.getColumn();
-        y = myPosition.getRow();
-        cont = true;
-
-        while (x<8 && y>1 && cont){
-            x++;
-            y--;
-            currentIteration.setColumn(x);
-            currentIteration.setRow(y);
-            cont = PieceMovesCalculator.checkOtherPieces(board,myPosition,currentIteration, movablePlaces,null);
-        }
-
-        x = myPosition.getColumn();
-        y = myPosition.getRow();
-        cont = true;
-
-        while (x>1 && y<8 && cont){
-            x--;
-            y++;
-            currentIteration.setColumn(x);
-            currentIteration.setRow(y);
-            cont = PieceMovesCalculator.checkOtherPieces(board,myPosition,currentIteration, movablePlaces,null);
-        }
+        PieceMovesCalculator.checkDiagonals(board, myPosition, movablePlaces);
         return movablePlaces;
     }
 }

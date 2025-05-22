@@ -21,10 +21,10 @@ public class PawnMoves {
             y--;
         }
         currentIteration.setRow(y);
-        ChessPiece potential_move = board.getPiece(currentIteration);
+        ChessPiece potentialMove = board.getPiece(currentIteration);
         if (myPosition.getRow() < 7 && movingPawn.getTeamColor().equals(ChessGame.TeamColor.WHITE) || myPosition.getRow() > 2 && movingPawn.getTeamColor().equals(ChessGame.TeamColor.BLACK)) {
             //move forward 1 logic
-            if (potential_move == null) {  //what to do if the potential space the piece could move to is empty
+            if (potentialMove == null) {  //what to do if the potential space the piece could move to is empty
                 ChessPosition movablePos = new ChessPosition(y, x);  //create copy of currentIteration so copy doesn't update when we don't want it to
                 movablePlaces.add(new ChessMove(myPosition, movablePos, null));  //add copy to list of possible moves
             }
@@ -32,8 +32,8 @@ public class PawnMoves {
             x++;
             if (x < 9) {
                 currentIteration.setColumn(x);
-                potential_move = board.getPiece(currentIteration);
-                if (potential_move != null && !potential_move.getTeamColor().equals(movingPawn.getTeamColor())) {
+                potentialMove = board.getPiece(currentIteration);
+                if (potentialMove != null && !potentialMove.getTeamColor().equals(movingPawn.getTeamColor())) {
                     ChessPosition movablePos = new ChessPosition(y, x);  //create copy of currentIteration so copy doesn't update when we don't want it to
                     movablePlaces.add(new ChessMove(myPosition, movablePos, null));  //add copy to list of possible moves
                 }
@@ -42,8 +42,8 @@ public class PawnMoves {
             x = x - 2;
             if (x > 0) {
                 currentIteration.setColumn(x);
-                potential_move = board.getPiece(currentIteration);
-                if (potential_move != null && !potential_move.getTeamColor().equals(movingPawn.getTeamColor())) {
+                potentialMove = board.getPiece(currentIteration);
+                if (potentialMove != null && !potentialMove.getTeamColor().equals(movingPawn.getTeamColor())) {
                     ChessPosition movablePos = new ChessPosition(y, x);  //create copy of currentIteration so copy doesn't update when we don't want it to
                     movablePlaces.add(new ChessMove(myPosition, movablePos, null));  //add copy to list of possible moves
                 }
@@ -51,8 +51,8 @@ public class PawnMoves {
             //move forward 2 if on starting location logic
             x++;
             currentIteration.setColumn(x);
-            potential_move = board.getPiece(currentIteration);
-            if (myPosition.getRow() == 2 && potential_move == null && movingPawn.getTeamColor().equals(ChessGame.TeamColor.WHITE) || myPosition.getRow() == 7 && potential_move == null && movingPawn.getTeamColor().equals(ChessGame.TeamColor.BLACK)) {
+            potentialMove = board.getPiece(currentIteration);
+            if (myPosition.getRow() == 2 && potentialMove == null && movingPawn.getTeamColor().equals(ChessGame.TeamColor.WHITE) || myPosition.getRow() == 7 && potentialMove == null && movingPawn.getTeamColor().equals(ChessGame.TeamColor.BLACK)) {
                 if (movingPawn.getTeamColor().equals(ChessGame.TeamColor.WHITE)) {
                     y++;
                 }
@@ -60,8 +60,8 @@ public class PawnMoves {
                     y--;
                 }
                 currentIteration.setRow(y);
-                potential_move = board.getPiece(currentIteration);
-                if (potential_move == null) {  //what to do if the potential space the piece could move to is empty
+                potentialMove = board.getPiece(currentIteration);
+                if (potentialMove == null) {  //what to do if the potential space the piece could move to is empty
                     ChessPosition movablePos = new ChessPosition(y, x);  //create copy of currentIteration so copy doesn't update when we don't want it to
                     movablePlaces.add(new ChessMove(myPosition, movablePos, null));  //add copy to list of possible moves
                 }
@@ -71,7 +71,7 @@ public class PawnMoves {
         //promotion logic
         if (myPosition.getRow() == 7 && movingPawn.getTeamColor().equals(ChessGame.TeamColor.WHITE) || myPosition.getRow() == 2 && movingPawn.getTeamColor().equals(ChessGame.TeamColor.BLACK)) {
             //move forward 1 logic
-            if (potential_move == null) {  //what to do if the potential space the piece could move to is empty
+            if (potentialMove == null) {  //what to do if the potential space the piece could move to is empty
                 ChessPosition movablePos = new ChessPosition(y, x);  //create copy of currentIteration so copy doesn't update when we don't want it to
                 movablePlaces.add(new ChessMove(myPosition, movablePos, ChessPiece.PieceType.KNIGHT));
                 movablePlaces.add(new ChessMove(myPosition, movablePos, ChessPiece.PieceType.BISHOP));
@@ -82,8 +82,8 @@ public class PawnMoves {
             x++;
             if (x < 9) {
                 currentIteration.setColumn(x);
-                potential_move = board.getPiece(currentIteration);
-                if (potential_move != null && !potential_move.getTeamColor().equals(movingPawn.getTeamColor())) {
+                potentialMove = board.getPiece(currentIteration);
+                if (potentialMove != null && !potentialMove.getTeamColor().equals(movingPawn.getTeamColor())) {
                     ChessPosition movablePos = new ChessPosition(y, x);  //create copy of currentIteration so copy doesn't update when we don't want it to
                     movablePlaces.add(new ChessMove(myPosition, movablePos, ChessPiece.PieceType.KNIGHT));
                     movablePlaces.add(new ChessMove(myPosition, movablePos, ChessPiece.PieceType.BISHOP));
@@ -95,8 +95,8 @@ public class PawnMoves {
             x = x - 2;
             if (x > 0) {
                 currentIteration.setColumn(x);
-                potential_move = board.getPiece(currentIteration);
-                if (potential_move != null && !potential_move.getTeamColor().equals(movingPawn.getTeamColor())) {
+                potentialMove = board.getPiece(currentIteration);
+                if (potentialMove != null && !potentialMove.getTeamColor().equals(movingPawn.getTeamColor())) {
                     ChessPosition movablePos = new ChessPosition(y, x);  //create copy of currentIteration so copy doesn't update when we don't want it to
                     movablePlaces.add(new ChessMove(myPosition, movablePos, ChessPiece.PieceType.KNIGHT));
                     movablePlaces.add(new ChessMove(myPosition, movablePos, ChessPiece.PieceType.BISHOP));

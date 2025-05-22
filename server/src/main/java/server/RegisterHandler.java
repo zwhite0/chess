@@ -14,6 +14,7 @@ public class RegisterHandler {
     UserDAO users;
     AuthDAO auths;
 
+
     RegisterHandler(UserDAO users, AuthDAO auths){
         this.users = users;
         this.auths = auths;

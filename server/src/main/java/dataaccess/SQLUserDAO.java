@@ -31,21 +31,36 @@ public class SQLUserDAO implements UserDAO{
     public UserData getUser(String username) {
         var sql = "SELECT username, password, email FROM users WHERE username=?";
         try (Connection connection = DatabaseManager.getConnection()){
-
+            try (var ps = connection.prepareStatement(sql)) {
+                ps.setString(1, username);
+                try (var rs = ps.executeQuery()){
+                    if (rs.next()) {
+                        String password = rs.getString("password");
+                        String email = rs.getString("email");
+                        return new UserData(username, password, email);
+                    } else {
+                        return null;
+                    }
+                }
+            }
         } catch (SQLException | DataAccessException e) {
             throw new RuntimeException(e);
         }
-        return null;
     }
 
     @Override
     public void clear() {
-
+        var sql = "TRUNCATE users";
+        try (Connection connection = DatabaseManager.getConnection()) {
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.executeUpdate();
+        } catch (SQLException | DataAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 
-
-    private final String[] createStatements = {
+        private final String[] createStatements = {
             """
             CREATE TABLE IF NOT EXISTS  users (
               `username` varchar(256) NOT NULL PRIMARY KEY,

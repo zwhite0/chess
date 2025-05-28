@@ -1,18 +1,40 @@
 package dataaccess;
 
+import com.google.gson.Gson;
 import model.UserData;
 import java.sql.*;
 
 
+
 public class SQLUserDAO implements UserDAO{
+
+    SQLUserDAO() throws DataAccessException {
+        configureDatabase();
+    }
 
     @Override
     public void createUser(UserData user) {
-
+        var sql = "INSERT INTO users (username, password, email) VALUES (?, ?, ?)";
+        try (Connection connection = DatabaseManager.getConnection()) {
+            PreparedStatement statement = connection.prepareStatement(sql);
+            // sets values to the placeholders and then updates
+            statement.setString(1, user.username());
+            statement.setString(2, user.password());
+            statement.setString(3, user.email());
+            statement.executeUpdate();
+        } catch (SQLException | DataAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public UserData getUser(String username) {
+        var sql = "SELECT username, password, email FROM users WHERE username=?";
+        try (Connection connection = DatabaseManager.getConnection()){
+
+        } catch (SQLException | DataAccessException e) {
+            throw new RuntimeException(e);
+        }
         return null;
     }
 

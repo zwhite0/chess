@@ -2,6 +2,8 @@ package dataaccess;
 
 import com.google.gson.Gson;
 import model.UserData;
+import service.BadRequestException;
+
 import java.sql.*;
 
 
@@ -23,7 +25,7 @@ public class SQLUserDAO implements UserDAO{
             statement.setString(3, user.email());
             statement.executeUpdate();
         } catch (SQLException | DataAccessException e) {
-            throw new RuntimeException(e);
+            throw new BadRequestException("bad request");
         }
     }
 
@@ -65,7 +67,7 @@ public class SQLUserDAO implements UserDAO{
             CREATE TABLE IF NOT EXISTS  users (
               `username` varchar(256) NOT NULL PRIMARY KEY,
               `password` varchar(256) NOT NULL,
-              `email` varchar(256) NOT NULL,
+              `email` varchar(256) NOT NULL
             )
             """
     };

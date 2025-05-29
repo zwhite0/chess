@@ -17,6 +17,10 @@ import static org.junit.jupiter.api.Assertions.*;
 public class SQLUserTests {
 
     private static Connection conn;
+    private SQLUserDAO userDAO = new SQLUserDAO();
+
+    public SQLUserTests() throws DataAccessException {
+    }
 
     @BeforeAll
     public static void setup() throws DataAccessException {
@@ -40,8 +44,7 @@ public class SQLUserTests {
     }
 
     @Test
-    public void createUserSuccess() throws DataAccessException, SQLException {
-        SQLUserDAO userDAO = new SQLUserDAO();
+    public void createUserSuccess() throws SQLException {
         UserData testUser = new UserData("Sam","thisisapassword","email@email.com");
         userDAO.createUser(testUser);
 
@@ -56,8 +59,7 @@ public class SQLUserTests {
     }
 
     @Test
-    public void createUserFailure() throws DataAccessException, SQLException {
-        SQLUserDAO userDAO = new SQLUserDAO();
+    public void createUserFailure(){
         UserData testUser = new UserData(null,"thisisapassword","email@email.com");
 
         assertThrows (BadRequestException.class, () -> {
@@ -66,8 +68,7 @@ public class SQLUserTests {
     }
 
     @Test
-    public void getUserSuccess() throws DataAccessException, SQLException {
-        SQLUserDAO userDAO = new SQLUserDAO();
+    public void getUserSuccess(){
         UserData testUser = new UserData("Sam","thisisapassword","email@email.com");
         userDAO.createUser(testUser);
         UserData user = userDAO.getUser("Sam");
@@ -76,8 +77,7 @@ public class SQLUserTests {
     }
 
     @Test
-    public void getUserFailure() throws DataAccessException {
-        SQLUserDAO userDAO = new SQLUserDAO();
+    public void getUserFailure() {
         UserData testUser = new UserData("Sam","thisisapassword","email@email.com");
         userDAO.createUser(testUser);
         UserData user = userDAO.getUser("Bill");
@@ -85,8 +85,7 @@ public class SQLUserTests {
     }
 
     @Test
-    public void clearSuccess() throws DataAccessException {
-        SQLUserDAO userDAO = new SQLUserDAO();
+    public void clearSuccess() {
         UserData testUser = new UserData("Sam","thisisapassword","email@email.com");
         userDAO.createUser(testUser);
         userDAO.clear();
@@ -101,16 +100,14 @@ public class SQLUserTests {
     }
 
     @Test
-    public void authorizeUserSuccess() throws DataAccessException {
-        SQLUserDAO userDAO = new SQLUserDAO();
+    public void authorizeUserSuccess(){
         UserData testUser = new UserData("Sam","thisisapassword","email@email.com");
         userDAO.createUser(testUser);
         assertTrue(userDAO.authorizeUser("Sam","thisisapassword"));
     }
 
     @Test
-    public void authorizeUserFailure() throws DataAccessException {
-        SQLUserDAO userDAO = new SQLUserDAO();
+    public void authorizeUserFailure() {
         UserData testUser = new UserData("Sam","thisisapassword","email@email.com");
         userDAO.createUser(testUser);
         assertFalse(userDAO.authorizeUser("Sam","thisisnotapassword"));

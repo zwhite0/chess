@@ -8,9 +8,20 @@ import spark.*;
 
 public class Server {
 
-    UserDAO users = new MemoryUserDAO();
-    AuthDAO auths =  new MemoryAuthDAO();
-    GameDAO games = new MemoryGameDAO();
+    UserDAO users;
+    AuthDAO auths;
+    GameDAO games;
+
+    {
+        try {
+            users = new SQLUserDAO();
+            auths = new SQLAuthDAO();
+            games = new SQLGameDAO();
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 
     public int run(int desiredPort) {
         Spark.port(desiredPort);
@@ -26,6 +37,8 @@ public class Server {
                 return catchExceptions(response, 403,"Error: already taken");
             } catch (BadRequestException e){
                 return catchExceptions(response, 400,"Error: bad request");
+            } catch (DataAccessException e){
+                return catchExceptions(response, 500, "Error: bad data access");
             }
         });
 
@@ -37,6 +50,8 @@ public class Server {
                 return catchExceptions(response, 400,"Error: bad request");
             } catch (UnauthorizedException e){
                 return catchExceptions(response, 401,"Error: unauthorized");
+            } catch (DataAccessException e){
+                return catchExceptions(response, 500, "Error: bad data access");
             }
         });
 
@@ -46,12 +61,18 @@ public class Server {
                 return handler.logoutHandler(request.headers("authorization"));
             } catch (UnauthorizedException e){
                 return catchExceptions(response, 401,"Error: unauthorized");
+            } catch (DataAccessException e){
+                return catchExceptions(response, 500, "Error: bad data access");
             }
         });
 
         Spark.delete("/db", (request, response) -> {
             ClearHandler handler = new ClearHandler(users, auths, games);
-            return handler.clearHandler(request.body());
+            try {
+                return handler.clearHandler(request.body());
+            } catch (DataAccessException e){
+                return catchExceptions(response, 500, "Error: bad data access");
+            }
         });
 
         Spark.post("/game", (request, response) -> {
@@ -62,6 +83,8 @@ public class Server {
                return catchExceptions(response, 401,"Error: unauthorized");
            } catch (BadRequestException e){
                return catchExceptions(response, 400,"Error: bad request");
+           } catch (DataAccessException e){
+               return catchExceptions(response, 500, "Error: bad data access");
            }
         });
 
@@ -75,6 +98,8 @@ public class Server {
                 return catchExceptions(response, 400,"Error: bad request");
             } catch (AlreadyTakenException e){
                 return catchExceptions(response, 403,"Error: already taken");
+            } catch (DataAccessException e){
+                return catchExceptions(response, 500, "Error: bad data access");
             }
         });
 
@@ -84,6 +109,8 @@ public class Server {
                 return handler.listGamesHandler(request.headers("authorization"));
             } catch (UnauthorizedException e){
                 return catchExceptions(response, 401,"Error: unauthorized");
+            } catch (DataAccessException e){
+                return catchExceptions(response, 500, "Error: bad data access");
             }
         });
 

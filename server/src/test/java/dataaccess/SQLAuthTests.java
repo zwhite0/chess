@@ -70,7 +70,7 @@ public class SQLAuthTests {
     }
 
     @Test
-    public void getAuthSuccess(){
+    public void getAuthSuccess() throws DataAccessException {
         AuthData testAuth = new AuthData("authToken","username");
         authDAO.createAuth(testAuth);
         AuthData auth = authDAO.getAuth("authToken");
@@ -78,7 +78,7 @@ public class SQLAuthTests {
     }
 
     @Test
-    public void getAuthFailure() {
+    public void getAuthFailure() throws DataAccessException {
         AuthData testAuth = new AuthData("authToken","username");
         authDAO.createAuth(testAuth);
         AuthData auth = authDAO.getAuth("notAToken");
@@ -86,7 +86,7 @@ public class SQLAuthTests {
     }
 
     @Test
-    public void clearSuccess() {
+    public void clearSuccess() throws DataAccessException {
         AuthData testAuth = new AuthData("authToken","username");
         authDAO.createAuth(testAuth);
         authDAO.clear();
@@ -101,7 +101,7 @@ public class SQLAuthTests {
     }
 
     @Test
-    public void deleteAuthSuccess(){
+    public void deleteAuthSuccess() throws DataAccessException {
         AuthData testAuth = new AuthData("authToken","username");
         authDAO.createAuth(testAuth);
         authDAO.deleteAuth(testAuth);
@@ -110,7 +110,7 @@ public class SQLAuthTests {
     }
 
     @Test
-    public void deleteAuthFailure(){
+    public void deleteAuthFailure() throws DataAccessException {
         AuthData testAuth = new AuthData("authToken","username");
         authDAO.createAuth(testAuth);
         authDAO.deleteAuth(new AuthData("notAuthToken","notUsername"));

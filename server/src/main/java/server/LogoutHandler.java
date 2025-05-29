@@ -2,6 +2,7 @@ package server;
 
 import com.google.gson.Gson;
 import dataaccess.AuthDAO;
+import dataaccess.DataAccessException;
 import service.requestsandresults.LogoutRequest;
 import service.requestsandresults.LogoutResult;
 import service.UserService;
@@ -14,7 +15,7 @@ public class LogoutHandler {
         this.auths = auths;
     }
 
-    public String logoutHandler(String json) {
+    public String logoutHandler(String json) throws DataAccessException {
         UserService newLogout = new UserService(null, auths, null);
        var serializer = new Gson();
         LogoutRequest logoutRequest = new LogoutRequest(json);

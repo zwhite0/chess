@@ -2,6 +2,7 @@ package server;
 
 import com.google.gson.Gson;
 import dataaccess.AuthDAO;
+import dataaccess.DataAccessException;
 import dataaccess.UserDAO;
 import service.requestsandresults.RegisterRequest;
 import service.requestsandresults.RegisterResult;
@@ -18,7 +19,7 @@ public class RegisterHandler {
         this.auths = auths;
     }
 
-    public String registerHandler(String json) {
+    public String registerHandler(String json) throws DataAccessException {
         UserService newRegister = new UserService(users, auths, null);
         var serializer = new Gson();
         RegisterRequest registerRequest = serializer.fromJson(json,RegisterRequest.class);

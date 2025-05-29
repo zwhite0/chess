@@ -25,7 +25,7 @@ public class UserService {
         return super.equals(obj);
     }
 
-    public RegisterResult register(RegisterRequest registerRequest) throws AlreadyTakenException, BadRequestException{
+    public RegisterResult register(RegisterRequest registerRequest) throws AlreadyTakenException, BadRequestException, DataAccessException {
         String username = registerRequest.username();
         String password = registerRequest.password();
         String email = registerRequest.email();
@@ -43,7 +43,7 @@ public class UserService {
         }
     }
 
-    public LoginResult login(LoginRequest loginRequest) {
+    public LoginResult login(LoginRequest loginRequest) throws DataAccessException {
         String username = loginRequest.username();
         String password = loginRequest.password();
         if (username == null || password == null){
@@ -61,7 +61,7 @@ public class UserService {
         return new LoginResult(username,newAuth);
     }
 
-    public LogoutResult logout(LogoutRequest logoutRequest) throws UnauthorizedException {
+    public LogoutResult logout(LogoutRequest logoutRequest) throws UnauthorizedException, DataAccessException {
         String authToken = null;
         if (logoutRequest != null) {
             authToken = logoutRequest.authToken();
@@ -74,7 +74,7 @@ public class UserService {
         return new LogoutResult();
     }
 
-    public ClearResult clear(ClearRequest clearRequest){
+    public ClearResult clear(ClearRequest clearRequest) throws DataAccessException {
         users.clear();
         auths.clear();
         games.clear();

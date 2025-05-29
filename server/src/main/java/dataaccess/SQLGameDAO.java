@@ -15,12 +15,12 @@ import java.util.List;
 
 public class SQLGameDAO implements GameDAO{
 
-    SQLGameDAO() throws DataAccessException {
+    public SQLGameDAO() throws DataAccessException {
         configureDatabase();
     }
 
     @Override
-    public void createGame(GameData game) {
+    public void createGame(GameData game) throws DataAccessException {
         var sql = "INSERT INTO games (gameID, whiteUsername, blackUsername, gameName, game) VALUES (?, ?, ?, ?, ?)";
         var json = new Gson().toJson(game.game());
         try (Connection connection = DatabaseManager.getConnection()) {
@@ -33,12 +33,12 @@ public class SQLGameDAO implements GameDAO{
             statement.setString(5,json);
             statement.executeUpdate();
         } catch (SQLException | DataAccessException e) {
-            throw new BadRequestException("bad request");
+            throw new DataAccessException("bad data access");
         }
     }
 
     @Override
-    public GameData getGame(Integer gameID) {
+    public GameData getGame(Integer gameID) throws DataAccessException {
         var sql = "SELECT gameID, whiteUsername, blackUsername, gameName, game FROM games WHERE gameID=?";
         try (Connection connection = DatabaseManager.getConnection()){
             try (var ps = connection.prepareStatement(sql)) {
@@ -57,7 +57,7 @@ public class SQLGameDAO implements GameDAO{
                 }
             }
         } catch (SQLException | DataAccessException e) {
-            throw new RuntimeException(e);
+            throw new DataAccessException("bad data access");
         }
     }
 
@@ -86,7 +86,7 @@ public class SQLGameDAO implements GameDAO{
     }
 
     @Override
-    public void updateGame(GameData game) {
+    public void updateGame(GameData game) throws DataAccessException {
         var json = new Gson().toJson(game.game());
         String sql = "UPDATE games SET game = ? WHERE gameID = ?";
         try (Connection connection = DatabaseManager.getConnection()){
@@ -96,30 +96,30 @@ public class SQLGameDAO implements GameDAO{
                 ps.executeUpdate();
             }
         } catch (SQLException | DataAccessException e) {
-            throw new RuntimeException(e);
+            throw new DataAccessException("bad data access");
         }
     }
 
     @Override
-    public void clear() {
+    public void clear() throws DataAccessException {
         var sql = "TRUNCATE games";
         try (Connection connection = DatabaseManager.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.executeUpdate();
         } catch (SQLException | DataAccessException e) {
-            throw new RuntimeException(e);
+            throw new DataAccessException("bad data access");
         }
     }
 
     private final String[] createStatements = {
             """
-            CREATE TABLE IF NOT EXISTS  games (
-              `gameID` integer NOT NULL PRIMARY KEY,
-              `whiteUsername` varchar(256),
-              `blackUsername` varchar(256),
-              'gameName' varchar(256) NOT NULL,
-              'game' JSON NOT NULL
-            )
+            CREATE TABLE IF NOT EXISTS games (
+                   `gameID` INTEGER NOT NULL PRIMARY KEY,
+                   `whiteUsername` VARCHAR(256),
+                   `blackUsername` VARCHAR(256),
+                   `gameName` VARCHAR(256) NOT NULL,
+                   `game` TEXT NOT NULL
+                 )
             """
     };
 
@@ -132,7 +132,7 @@ public class SQLGameDAO implements GameDAO{
                 }
             }
         } catch (SQLException | DataAccessException ex) {
-            throw new ResponseException(500, String.format("Unable to configure database: %s", ex.getMessage()));
+            throw new DataAccessException("bad data access");
         }
     }
 }

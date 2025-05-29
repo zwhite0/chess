@@ -12,12 +12,12 @@ import java.sql.*;
 
 public class SQLUserDAO implements UserDAO{
 
-    SQLUserDAO() throws DataAccessException {
+    public SQLUserDAO() throws DataAccessException {
         configureDatabase();
     }
 
     @Override
-    public void createUser(UserData user) {
+    public void createUser(UserData user) throws DataAccessException {
         var sql = "INSERT INTO users (username, password, email) VALUES (?, ?, ?)";
         String hashedPassword = BCrypt.hashpw(user.password(), BCrypt.gensalt());
 
@@ -29,12 +29,12 @@ public class SQLUserDAO implements UserDAO{
             statement.setString(3, user.email());
             statement.executeUpdate();
         } catch (SQLException | DataAccessException e) {
-            throw new BadRequestException("bad request");
+            throw new DataAccessException("bad data access");
         }
     }
 
     @Override
-    public UserData getUser(String username) {
+    public UserData getUser(String username) throws DataAccessException {
         var sql = "SELECT username, password, email FROM users WHERE username=?";
         try (Connection connection = DatabaseManager.getConnection()){
             try (var ps = connection.prepareStatement(sql)) {
@@ -50,23 +50,23 @@ public class SQLUserDAO implements UserDAO{
                 }
             }
         } catch (SQLException | DataAccessException e) {
-            throw new RuntimeException(e);
+            throw new DataAccessException("bad data access");
         }
     }
 
     @Override
-    public boolean authorizeUser(String username, String password) {
+    public boolean authorizeUser(String username, String password) throws DataAccessException {
         return BCrypt.checkpw(password, getUser(username).password());
     }
 
     @Override
-    public void clear() {
+    public void clear() throws DataAccessException {
         var sql = "TRUNCATE users";
         try (Connection connection = DatabaseManager.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.executeUpdate();
         } catch (SQLException | DataAccessException e) {
-            throw new RuntimeException(e);
+            throw new DataAccessException("bad data access");
         }
     }
 
@@ -90,7 +90,7 @@ public class SQLUserDAO implements UserDAO{
                 }
             }
         } catch (SQLException | DataAccessException ex) {
-            throw new ResponseException(500, String.format("Unable to configure database: %s", ex.getMessage()));
+            throw new DataAccessException("bad data access");
         }
     }
 }

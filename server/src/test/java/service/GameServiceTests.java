@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class GameServiceTests {
 
     @Test
-    public void createGameSuccess(){
+    public void createGameSuccess() throws DataAccessException {
         AuthDAO auths = new MemoryAuthDAO();
         GameDAO games = new MemoryGameDAO();
 
@@ -29,7 +29,7 @@ public class GameServiceTests {
     }
 
     @Test
-    public void createGameFailure(){
+    public void createGameFailure() throws DataAccessException {
         AuthDAO auths = new MemoryAuthDAO();
         GameDAO games = new MemoryGameDAO();
 
@@ -45,7 +45,7 @@ public class GameServiceTests {
     }
 
     @Test
-    public void joinGameSuccess(){
+    public void joinGameSuccess() throws DataAccessException {
         AuthDAO auths = new MemoryAuthDAO();
         GameDAO games = new MemoryGameDAO();
 
@@ -60,7 +60,7 @@ public class GameServiceTests {
     }
 
     @Test
-    public void joinGameFailure(){
+    public void joinGameFailure() throws DataAccessException {
         AuthDAO auths = new MemoryAuthDAO();
         GameDAO games = new MemoryGameDAO();
 
@@ -76,7 +76,7 @@ public class GameServiceTests {
     }
 
     @Test
-    public void listGamesSuccess(){
+    public void listGamesSuccess() throws DataAccessException {
         AuthDAO auths = new MemoryAuthDAO();
         GameDAO games = new MemoryGameDAO();
 
@@ -99,7 +99,7 @@ public class GameServiceTests {
     }
 
     @Test
-    public void listGamesFailure(){
+    public void listGamesFailure() throws DataAccessException {
         AuthDAO auths = new MemoryAuthDAO();
         GameDAO games = new MemoryGameDAO();
 

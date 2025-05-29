@@ -2,6 +2,7 @@ package service;
 
 import chess.ChessGame;
 import dataaccess.AuthDAO;
+import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import dataaccess.UserDAO;
 import model.AuthData;
@@ -25,7 +26,7 @@ public class GameService {
         return super.equals(obj);
     }
 
-    public CreateGameResult createGame(CreateGameRequest createGameRequest, String authToken) throws UnauthorizedException{
+    public CreateGameResult createGame(CreateGameRequest createGameRequest, String authToken) throws UnauthorizedException, DataAccessException {
         String gameName = createGameRequest.gameName();
         if (gameName == null){
             throw new BadRequestException("bad request");
@@ -47,7 +48,7 @@ public class GameService {
     }
 
     public JoinGameResult joinGame(JoinGameRequest joinGameRequest, String authToken)
-            throws BadRequestException, UnauthorizedException, AlreadyTakenException{
+            throws BadRequestException, UnauthorizedException, AlreadyTakenException, DataAccessException {
         String playerColor = joinGameRequest.playerColor();
         Integer gameID = joinGameRequest.gameID();
         if (playerColor == null || gameID == null){
@@ -82,7 +83,7 @@ public class GameService {
         return new JoinGameResult();
     }
 
-    public ListGamesResult listGames(ListGamesRequest listGamesRequest) throws UnauthorizedException{
+    public ListGamesResult listGames(ListGamesRequest listGamesRequest) throws UnauthorizedException, DataAccessException {
         String authToken = listGamesRequest.authToken();
         AuthData auth = auths.getAuth(authToken);
         if (auth == null){

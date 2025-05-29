@@ -11,12 +11,12 @@ import java.sql.SQLException;
 
 public class SQLAuthDAO implements AuthDAO{
 
-    SQLAuthDAO() throws DataAccessException {
+    public SQLAuthDAO() throws DataAccessException {
         configureDatabase();
     }
 
     @Override
-    public void createAuth(AuthData auth) {
+    public void createAuth(AuthData auth) throws DataAccessException {
         var sql = "INSERT INTO auths (authToken, username) VALUES (?, ?)";
 
         try (Connection connection = DatabaseManager.getConnection()) {
@@ -26,12 +26,12 @@ public class SQLAuthDAO implements AuthDAO{
             statement.setString(2, auth.username());
             statement.executeUpdate();
         } catch (SQLException | DataAccessException e) {
-            throw new BadRequestException("bad request");
+            throw new DataAccessException("bad data access");
         }
     }
 
     @Override
-    public AuthData getAuth(String authToken) {
+    public AuthData getAuth(String authToken) throws DataAccessException {
         var sql = "SELECT authToken, username FROM auths WHERE authToken=?";
         try (Connection connection = DatabaseManager.getConnection()){
             try (var ps = connection.prepareStatement(sql)) {
@@ -46,12 +46,12 @@ public class SQLAuthDAO implements AuthDAO{
                 }
             }
         } catch (SQLException | DataAccessException e) {
-            throw new RuntimeException(e);
+            throw new DataAccessException("bad data access");
         }
     }
 
     @Override
-    public void deleteAuth(AuthData auth) {
+    public void deleteAuth(AuthData auth) throws DataAccessException {
         var sql = "DELETE FROM auths WHERE authToken=?";
         try (Connection connection = DatabaseManager.getConnection()) {
             try (var statement = connection.prepareStatement(sql)) {
@@ -59,18 +59,18 @@ public class SQLAuthDAO implements AuthDAO{
                 statement.executeUpdate();
             }
         } catch (SQLException | DataAccessException e) {
-            throw new RuntimeException(e);
+            throw new DataAccessException("bad data access");
         }
     }
 
     @Override
-    public void clear() {
+    public void clear() throws DataAccessException {
         var sql = "TRUNCATE auths";
         try (Connection connection = DatabaseManager.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.executeUpdate();
         } catch (SQLException | DataAccessException e) {
-            throw new RuntimeException(e);
+            throw new DataAccessException("bad data access");
         }
     }
 
@@ -92,7 +92,7 @@ public class SQLAuthDAO implements AuthDAO{
                 }
             }
         } catch (SQLException | DataAccessException ex) {
-            throw new ResponseException(500, String.format("Unable to configure database: %s", ex.getMessage()));
+            throw new DataAccessException("bad data access");
         }
     }
 }

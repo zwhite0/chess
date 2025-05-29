@@ -2,6 +2,7 @@ package server;
 
 import com.google.gson.Gson;
 import dataaccess.AuthDAO;
+import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import service.GameService;
 import service.requestsandresults.ListGamesRequest;
@@ -17,7 +18,7 @@ public class ListGamesHandler {
         this.games = games;
     }
 
-    public String listGamesHandler(String json) {
+    public String listGamesHandler(String json) throws DataAccessException {
         GameService newListGames = new GameService(null, auths, games);
         var serializer = new Gson();
         ListGamesRequest listGamesRequest = new ListGamesRequest(json);

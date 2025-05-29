@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class UserServiceTests {
 
     @Test
-    public void registerSuccess(){
+    public void registerSuccess() throws DataAccessException {
         UserDAO users = new MemoryUserDAO();
         AuthDAO auths = new MemoryAuthDAO();
         UserService service = new UserService(users, auths, null);
@@ -29,7 +29,7 @@ public class UserServiceTests {
     }
 
     @Test
-    public void registerFailure(){
+    public void registerFailure() throws DataAccessException {
         UserDAO users = new MemoryUserDAO();
         AuthDAO auths = new MemoryAuthDAO();
         UserService service = new UserService(users, auths, null);
@@ -43,7 +43,7 @@ public class UserServiceTests {
     }
 
     @Test
-    public void loginSuccess(){
+    public void loginSuccess() throws DataAccessException {
         UserDAO users = new MemoryUserDAO();
         AuthDAO auths = new MemoryAuthDAO();
         UserService service = new UserService(users, auths, null);
@@ -60,7 +60,7 @@ public class UserServiceTests {
     }
 
     @Test
-    public void loginFailure(){
+    public void loginFailure() throws DataAccessException {
         UserDAO users = new MemoryUserDAO();
         AuthDAO auths = new MemoryAuthDAO();
         UserService service = new UserService(users, auths, null);
@@ -75,7 +75,7 @@ public class UserServiceTests {
     }
 
     @Test
-    public void logoutSuccess(){
+    public void logoutSuccess() throws DataAccessException {
         UserDAO users = new MemoryUserDAO();
         AuthDAO auths = new MemoryAuthDAO();
         UserService service = new UserService(users, auths, null);
@@ -93,7 +93,7 @@ public class UserServiceTests {
     }
 
     @Test
-    public void logoutFailure(){
+    public void logoutFailure() throws DataAccessException {
         UserDAO users = new MemoryUserDAO();
         AuthDAO auths = new MemoryAuthDAO();
         UserService service = new UserService(users, auths, null);
@@ -112,7 +112,7 @@ public class UserServiceTests {
     }
 
     @Test
-    public void clearSuccess(){
+    public void clearSuccess() throws DataAccessException {
         UserDAO users = new MemoryUserDAO();
         AuthDAO auths = new MemoryAuthDAO();
         GameDAO games = new MemoryGameDAO();

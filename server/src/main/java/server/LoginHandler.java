@@ -2,6 +2,7 @@ package server;
 
 import com.google.gson.Gson;
 import dataaccess.AuthDAO;
+import dataaccess.DataAccessException;
 import dataaccess.UserDAO;
 import service.*;
 import service.requestsandresults.LoginRequest;
@@ -17,7 +18,7 @@ public class LoginHandler {
         this.auths = auths;
     }
 
-    public String loginHandler(String json) {
+    public String loginHandler(String json) throws DataAccessException {
         UserService newLogin = new UserService(users, auths, null);
         var serializer = new Gson();
         LoginRequest loginRequest = serializer.fromJson(json,LoginRequest.class);

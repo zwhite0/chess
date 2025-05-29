@@ -88,11 +88,13 @@ public class SQLGameDAO implements GameDAO{
     @Override
     public void updateGame(GameData game) throws DataAccessException {
         var json = new Gson().toJson(game.game());
-        String sql = "UPDATE games SET game = ? WHERE gameID = ?";
+        String sql = "UPDATE games SET game = ?, whiteUsername = ?, blackUsername = ? WHERE gameID = ?";
         try (Connection connection = DatabaseManager.getConnection()){
             try (PreparedStatement ps = connection.prepareStatement(sql)){
                 ps.setString(1,json);
-                ps.setInt(2,game.gameID());
+                ps.setString(2,game.whiteUsername());
+                ps.setString(3, game.blackUsername());
+                ps.setInt(4,game.gameID());
                 ps.executeUpdate();
             }
         } catch (SQLException | DataAccessException e) {

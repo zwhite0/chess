@@ -91,6 +91,9 @@ public class SQLGameDAO implements GameDAO{
         String sql = "UPDATE games SET game = ?, whiteUsername = ?, blackUsername = ? WHERE gameID = ?";
         try (Connection connection = DatabaseManager.getConnection()){
             try (PreparedStatement ps = connection.prepareStatement(sql)){
+                if (game.game() == null || game.gameName() == null) {
+                    throw new DataAccessException("Missing required game fields");
+                }
                 ps.setString(1,json);
                 ps.setString(2,game.whiteUsername());
                 ps.setString(3, game.blackUsername());

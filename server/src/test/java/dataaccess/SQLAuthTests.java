@@ -64,7 +64,7 @@ public class SQLAuthTests {
     public void createAuthFailure(){
         AuthData testAuth = new AuthData(null, "username");
 
-        assertThrows(BadRequestException.class, () -> {
+        assertThrows(DataAccessException.class, () -> {
             authDAO.createAuth(testAuth);
         });
     }

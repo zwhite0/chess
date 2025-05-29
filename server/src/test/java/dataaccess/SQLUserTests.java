@@ -62,7 +62,7 @@ public class SQLUserTests {
     public void createUserFailure(){
         UserData testUser = new UserData(null,"thisisapassword","email@email.com");
 
-        assertThrows (BadRequestException.class, () -> {
+        assertThrows (DataAccessException.class, () -> {
             userDAO.createUser(testUser);
         });
     }

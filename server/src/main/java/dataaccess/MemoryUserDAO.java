@@ -22,4 +22,9 @@ public class MemoryUserDAO implements UserDAO{
     public void clear() {
         users.clear();
     }
+
+    @Override
+    public boolean authorizeUser(String username, String password) {
+        return password.equals(users.get(username).password());
+    }
 }

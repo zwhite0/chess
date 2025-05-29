@@ -2,6 +2,8 @@ package dataaccess;
 
 import com.google.gson.Gson;
 import model.UserData;
+import org.mindrot.jbcrypt.BCrypt;
+import service.AlreadyTakenException;
 import service.BadRequestException;
 
 import java.sql.*;
@@ -17,11 +19,13 @@ public class SQLUserDAO implements UserDAO{
     @Override
     public void createUser(UserData user) {
         var sql = "INSERT INTO users (username, password, email) VALUES (?, ?, ?)";
+        String hashedPassword = BCrypt.hashpw(user.password(), BCrypt.gensalt());
+
         try (Connection connection = DatabaseManager.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(sql);
             // sets values to the placeholders and then updates
             statement.setString(1, user.username());
-            statement.setString(2, user.password());
+            statement.setString(2, hashedPassword);
             statement.setString(3, user.email());
             statement.executeUpdate();
         } catch (SQLException | DataAccessException e) {
@@ -37,9 +41,9 @@ public class SQLUserDAO implements UserDAO{
                 ps.setString(1, username);
                 try (var rs = ps.executeQuery()){
                     if (rs.next()) {
-                        String password = rs.getString("password");
+                        String hashedPassword = rs.getString("password");
                         String email = rs.getString("email");
-                        return new UserData(username, password, email);
+                        return new UserData(username, hashedPassword, email);
                     } else {
                         return null;
                     }
@@ -48,6 +52,11 @@ public class SQLUserDAO implements UserDAO{
         } catch (SQLException | DataAccessException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public boolean authorizeUser(String username, String password) {
+        return BCrypt.checkpw(password, getUser(username).password());
     }
 
     @Override

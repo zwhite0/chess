@@ -50,7 +50,7 @@ public class UserService {
             throw new BadRequestException("bad request");
         }
         UserData user = users.getUser(username);
-        if (user == null || ! password.equals(user.password())){
+        if (user == null || !users.authorizeUser(username,password)){
             throw new UnauthorizedException("unauthorized");
         }
         if (user.email() == null){

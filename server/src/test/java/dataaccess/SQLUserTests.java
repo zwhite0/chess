@@ -1,7 +1,10 @@
 package dataaccess;
 
 import model.UserData;
+import org.eclipse.jetty.server.Authentication;
 import org.junit.jupiter.api.*;
+import org.mindrot.jbcrypt.BCrypt;
+import service.AlreadyTakenException;
 import service.BadRequestException;
 import service.UnauthorizedException;
 import service.requestsandresults.ListGamesRequest;
@@ -9,7 +12,7 @@ import service.requestsandresults.ListGamesRequest;
 import javax.xml.crypto.Data;
 import java.sql.*;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class SQLUserTests {
 
@@ -48,18 +51,68 @@ public class SQLUserTests {
             ResultSet rs = ps.executeQuery();
 
             Assertions.assertTrue(rs.next());
-            Assertions.assertEquals("thisisapassword", rs.getString("password"));
             Assertions.assertEquals("email@email.com",rs.getString("email"));
         }
     }
 
     @Test
-    public void createUserFail() throws DataAccessException, SQLException {
+    public void createUserFailure() throws DataAccessException, SQLException {
         SQLUserDAO userDAO = new SQLUserDAO();
         UserData testUser = new UserData(null,"thisisapassword","email@email.com");
 
         assertThrows (BadRequestException.class, () -> {
             userDAO.createUser(testUser);
         });
+    }
+
+    @Test
+    public void getUserSuccess() throws DataAccessException, SQLException {
+        SQLUserDAO userDAO = new SQLUserDAO();
+        UserData testUser = new UserData("Sam","thisisapassword","email@email.com");
+        userDAO.createUser(testUser);
+        UserData user = userDAO.getUser("Sam");
+        Assertions.assertEquals("email@email.com", user.email());
+        Assertions.assertTrue(BCrypt.checkpw("thisisapassword", user.password()));
+    }
+
+    @Test
+    public void getUserFailure() throws DataAccessException {
+        SQLUserDAO userDAO = new SQLUserDAO();
+        UserData testUser = new UserData("Sam","thisisapassword","email@email.com");
+        userDAO.createUser(testUser);
+        UserData user = userDAO.getUser("Bill");
+        Assertions.assertNull(user);
+    }
+
+    @Test
+    public void clearSuccess() throws DataAccessException {
+        SQLUserDAO userDAO = new SQLUserDAO();
+        UserData testUser = new UserData("Sam","thisisapassword","email@email.com");
+        userDAO.createUser(testUser);
+        userDAO.clear();
+
+        String sql = "SELECT * FROM users";
+        try (PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+            Assertions.assertFalse(rs.next());
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    public void authorizeUserSuccess() throws DataAccessException {
+        SQLUserDAO userDAO = new SQLUserDAO();
+        UserData testUser = new UserData("Sam","thisisapassword","email@email.com");
+        userDAO.createUser(testUser);
+        assertTrue(userDAO.authorizeUser("Sam","thisisapassword"));
+    }
+
+    @Test
+    public void authorizeUserFailure() throws DataAccessException {
+        SQLUserDAO userDAO = new SQLUserDAO();
+        UserData testUser = new UserData("Sam","thisisapassword","email@email.com");
+        userDAO.createUser(testUser);
+        assertFalse(userDAO.authorizeUser("Sam","thisisnotapassword"));
     }
 }

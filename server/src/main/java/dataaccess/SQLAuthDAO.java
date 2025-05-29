@@ -84,15 +84,6 @@ public class SQLAuthDAO implements AuthDAO{
     };
 
     private void configureDatabase() throws DataAccessException {
-        DatabaseManager.createDatabase();
-        try (var conn = DatabaseManager.getConnection()) {
-            for (var statement : createStatements) {
-                try (var preparedStatement = conn.prepareStatement(statement)) {
-                    preparedStatement.executeUpdate();
-                }
-            }
-        } catch (SQLException | DataAccessException ex) {
-            throw new DataAccessException("bad data access");
-        }
+        SQLHelper.configureDatabase(createStatements);
     }
 }

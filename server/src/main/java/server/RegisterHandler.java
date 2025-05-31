@@ -4,8 +4,9 @@ import com.google.gson.Gson;
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import dataaccess.UserDAO;
-import service.requestsandresults.RegisterRequest;
-import service.requestsandresults.RegisterResult;
+import server.requestsandresults.RegisterRequest;
+import server.requestsandresults.RegisterResult;
+
 import service.UserService;
 
 public class RegisterHandler {

@@ -5,8 +5,8 @@ import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import dataaccess.UserDAO;
 import service.*;
-import service.requestsandresults.LoginRequest;
-import service.requestsandresults.LoginResult;
+import server.requestsandresults.LoginRequest;
+import server.requestsandresults.LoginResult;
 
 public class LoginHandler {
 

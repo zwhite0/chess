@@ -5,8 +5,8 @@ import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import service.*;
-import service.requestsandresults.CreateGameRequest;
-import service.requestsandresults.CreateGameResult;
+import server.requestsandresults.CreateGameRequest;
+import server.requestsandresults.CreateGameResult;
 
 public class CreateGameHandler {
 

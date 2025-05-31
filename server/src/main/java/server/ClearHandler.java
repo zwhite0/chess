@@ -6,8 +6,8 @@ import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import dataaccess.UserDAO;
 import service.*;
-import service.requestsandresults.ClearRequest;
-import service.requestsandresults.ClearResult;
+import server.requestsandresults.ClearRequest;
+import server.requestsandresults.ClearResult;
 
 public class ClearHandler {
 

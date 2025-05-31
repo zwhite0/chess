@@ -5,7 +5,7 @@ import dataaccess.*;
 import model.AuthData;
 import model.GameData;
 import org.junit.jupiter.api.Test;
-import service.requestsandresults.*;
+import server.requestsandresults.*;
 
 import java.util.ArrayList;
 import java.util.Collection;

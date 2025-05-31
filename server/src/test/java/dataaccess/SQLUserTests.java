@@ -1,15 +1,9 @@
 package dataaccess;
 
 import model.UserData;
-import org.eclipse.jetty.server.Authentication;
 import org.junit.jupiter.api.*;
 import org.mindrot.jbcrypt.BCrypt;
-import service.AlreadyTakenException;
-import service.BadRequestException;
-import service.UnauthorizedException;
-import service.requestsandresults.ListGamesRequest;
 
-import javax.xml.crypto.Data;
 import java.sql.*;
 
 import static org.junit.jupiter.api.Assertions.*;

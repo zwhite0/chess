@@ -3,8 +3,8 @@ package server;
 import com.google.gson.Gson;
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
-import service.requestsandresults.LogoutRequest;
-import service.requestsandresults.LogoutResult;
+import server.requestsandresults.LogoutRequest;
+import server.requestsandresults.LogoutResult;
 import service.UserService;
 
 public class LogoutHandler {

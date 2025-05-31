@@ -1,4 +1,4 @@
-package server.requestsandresults;
+package sharedserver.requestsandresults;
 
 import model.GameData;
 

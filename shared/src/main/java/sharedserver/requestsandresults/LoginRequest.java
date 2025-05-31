@@ -1,4 +1,4 @@
-package server.requestsandresults;
+package sharedserver.requestsandresults;
 
 public record LoginRequest(String username, String password) {
 }

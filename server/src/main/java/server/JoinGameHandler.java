@@ -5,8 +5,8 @@ import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import service.GameService;
-import server.requestsandresults.JoinGameRequest;
-import server.requestsandresults.JoinGameResult;
+import sharedserver.requestsandresults.JoinGameRequest;
+import sharedserver.requestsandresults.JoinGameResult;
 
 public class JoinGameHandler {
 

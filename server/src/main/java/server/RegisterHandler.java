@@ -4,8 +4,8 @@ import com.google.gson.Gson;
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import dataaccess.UserDAO;
-import server.requestsandresults.RegisterRequest;
-import server.requestsandresults.RegisterResult;
+import sharedserver.requestsandresults.RegisterRequest;
+import sharedserver.requestsandresults.RegisterResult;
 
 import service.UserService;
 

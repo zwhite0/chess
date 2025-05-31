@@ -7,7 +7,7 @@ import dataaccess.GameDAO;
 import dataaccess.UserDAO;
 import model.AuthData;
 import model.GameData;
-import server.requestsandresults.*;
+import sharedserver.requestsandresults.*;
 
 public class GameService {
 

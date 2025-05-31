@@ -1,10 +1,7 @@
-package server;
+package sharedserver;
 
 import com.google.gson.Gson;
-import server.requestsandresults.LoginRequest;
-import server.requestsandresults.LoginResult;
-import server.requestsandresults.RegisterRequest;
-import server.requestsandresults.RegisterResult;
+import sharedserver.requestsandresults.*;
 
 import java.io.*;
 import java.net.*;
@@ -25,6 +22,31 @@ public class ServerFacade {
     public LoginResult login(LoginRequest loginRequest) throws ResponseException {
         var path = "/session";
         return this.makeRequest("POST",path,loginRequest, LoginResult.class);
+    }
+
+    public LogoutResult logout(LogoutRequest logoutRequest) throws ResponseException{
+        var path = "/session";
+        return this.makeRequest("DELETE",path,logoutRequest, LogoutResult.class);
+    }
+
+    public ClearResult clear(ClearRequest clearRequest) throws ResponseException {
+        var path = "/db";
+        return this.makeRequest("DELETE",path,clearRequest,ClearResult.class);
+    }
+
+    public CreateGameResult createGame(CreateGameRequest createGameRequest) throws ResponseException {
+        var path = "/game";
+        return this.makeRequest("POST",path,createGameRequest,CreateGameResult.class);
+    }
+
+    public JoinGameResult joinGame(JoinGameRequest joinGameRequest) throws ResponseException{
+        var path = "/game";
+        return this.makeRequest("PUT",path,joinGameRequest, JoinGameResult.class);
+    }
+
+    public ListGamesResult listGames(ListGamesRequest listGamesRequest) throws ResponseException{
+        var path = "/game";
+        return this.makeRequest("GET",path,listGamesRequest,ListGamesResult.class);
     }
 
     private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws ResponseException {

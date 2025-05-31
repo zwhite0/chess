@@ -5,8 +5,8 @@ import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import service.GameService;
-import server.requestsandresults.ListGamesRequest;
-import server.requestsandresults.ListGamesResult;
+import sharedserver.requestsandresults.ListGamesRequest;
+import sharedserver.requestsandresults.ListGamesResult;
 
 public class ListGamesHandler {
 

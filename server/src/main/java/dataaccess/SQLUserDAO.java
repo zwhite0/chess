@@ -1,10 +1,8 @@
 package dataaccess;
 
-import com.google.gson.Gson;
 import model.UserData;
 import org.mindrot.jbcrypt.BCrypt;
-import service.AlreadyTakenException;
-import service.BadRequestException;
+import sharedserver.exceptions.DataAccessException;
 
 import java.sql.*;
 

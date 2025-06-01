@@ -1,6 +1,10 @@
 package service;
 
 import dataaccess.*;
+import sharedserver.exceptions.AlreadyTakenException;
+import sharedserver.exceptions.BadRequestException;
+import sharedserver.exceptions.DataAccessException;
+import sharedserver.exceptions.UnauthorizedException;
 import model.AuthData;
 import model.UserData;
 import sharedserver.requestsandresults.*;

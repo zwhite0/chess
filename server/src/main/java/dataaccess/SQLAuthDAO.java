@@ -1,9 +1,7 @@
 package dataaccess;
 
 import model.AuthData;
-import model.UserData;
-import org.mindrot.jbcrypt.BCrypt;
-import service.BadRequestException;
+import sharedserver.exceptions.DataAccessException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

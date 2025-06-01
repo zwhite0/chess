@@ -2,6 +2,9 @@ package service;
 
 import chess.ChessGame;
 import dataaccess.*;
+import sharedserver.exceptions.BadRequestException;
+import sharedserver.exceptions.DataAccessException;
+import sharedserver.exceptions.UnauthorizedException;
 import model.AuthData;
 import model.GameData;
 import model.UserData;

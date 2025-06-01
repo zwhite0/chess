@@ -1,6 +1,7 @@
 package dataaccess;
 
 import model.UserData;
+import sharedserver.exceptions.DataAccessException;
 
 public interface UserDAO {
     void createUser(UserData user) throws DataAccessException;

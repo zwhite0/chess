@@ -1,12 +1,13 @@
 package dataaccess;
 
 import chess.ChessGame;
-import model.AuthData;
 import model.GameData;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import sharedserver.exceptions.DataAccessException;
+import sharedserver.exceptions.ResponseException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -91,7 +92,7 @@ public class SQLGameTests {
     }
 
     @Test
-    public void listGamesSuccess() throws DataAccessException {
+    public void listGamesSuccess() throws DataAccessException, ResponseException {
         GameData testGame1 = new GameData(1,"white","black","myFunGame1",new ChessGame());
         gameDAO.createGame(testGame1);
         GameData testGame2 = new GameData(2,"white","black","myFunGame2",new ChessGame());
@@ -103,7 +104,7 @@ public class SQLGameTests {
     }
 
     @Test
-    public void listGamesFailure() throws DataAccessException {
+    public void listGamesFailure() throws DataAccessException, ResponseException {
         Assertions.assertTrue(gameDAO.listGames().isEmpty());
     }
 

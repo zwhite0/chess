@@ -2,7 +2,10 @@ package server;
 
 import com.google.gson.Gson;
 import dataaccess.*;
-import service.*;
+import sharedserver.exceptions.AlreadyTakenException;
+import sharedserver.exceptions.BadRequestException;
+import sharedserver.exceptions.DataAccessException;
+import sharedserver.exceptions.UnauthorizedException;
 import sharedserver.requestsandresults.ErrorResponse;
 import spark.*;
 
@@ -124,7 +127,8 @@ public class Server {
     private static String catchExceptions(spark.Response response, int statusCode, String errorMessage){
         response.status(statusCode);
         Gson gson = new Gson();
-        ErrorResponse message = new ErrorResponse("Error: unauthorized");
+        ErrorResponse message = new ErrorResponse(errorMessage);
+        System.out.println(gson.toJson(message));
         return gson.toJson(message);
     }
 

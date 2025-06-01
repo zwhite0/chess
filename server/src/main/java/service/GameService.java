@@ -2,7 +2,7 @@ package service;
 
 import chess.ChessGame;
 import dataaccess.AuthDAO;
-import dataaccess.DataAccessException;
+import sharedserver.exceptions.*;
 import dataaccess.GameDAO;
 import dataaccess.UserDAO;
 import model.AuthData;
@@ -83,7 +83,7 @@ public class GameService {
         return new JoinGameResult();
     }
 
-    public ListGamesResult listGames(ListGamesRequest listGamesRequest) throws UnauthorizedException, DataAccessException {
+    public ListGamesResult listGames(ListGamesRequest listGamesRequest) throws UnauthorizedException, DataAccessException, ResponseException {
         String authToken = listGamesRequest.authToken();
         AuthData auth = auths.getAuth(authToken);
         if (auth == null){

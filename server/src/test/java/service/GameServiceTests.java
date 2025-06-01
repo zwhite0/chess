@@ -2,6 +2,10 @@ package service;
 
 import chess.ChessGame;
 import dataaccess.*;
+import sharedserver.exceptions.AlreadyTakenException;
+import sharedserver.exceptions.DataAccessException;
+import sharedserver.exceptions.ResponseException;
+import sharedserver.exceptions.UnauthorizedException;
 import model.AuthData;
 import model.GameData;
 import org.junit.jupiter.api.Test;
@@ -76,7 +80,7 @@ public class GameServiceTests {
     }
 
     @Test
-    public void listGamesSuccess() throws DataAccessException {
+    public void listGamesSuccess() throws DataAccessException, ResponseException {
         AuthDAO auths = new MemoryAuthDAO();
         GameDAO games = new MemoryGameDAO();
 

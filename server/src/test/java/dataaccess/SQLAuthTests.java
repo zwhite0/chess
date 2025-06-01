@@ -1,13 +1,11 @@
 package dataaccess;
 
 import model.AuthData;
-import model.UserData;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mindrot.jbcrypt.BCrypt;
-import service.BadRequestException;
+import sharedserver.exceptions.DataAccessException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

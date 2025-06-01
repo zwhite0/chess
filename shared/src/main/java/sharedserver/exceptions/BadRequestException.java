@@ -1,4 +1,4 @@
-package service;
+package sharedserver.exceptions;
 
 public class BadRequestException extends RuntimeException {
     public BadRequestException(String message) {

@@ -1,6 +1,4 @@
-package service;
-
-import com.google.gson.Gson;
+package sharedserver.exceptions;
 
 public class AlreadyTakenException extends RuntimeException {
     public AlreadyTakenException() {

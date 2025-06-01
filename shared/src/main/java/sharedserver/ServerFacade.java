@@ -1,6 +1,7 @@
 package sharedserver;
 
 import com.google.gson.Gson;
+import sharedserver.exceptions.*;
 import sharedserver.requestsandresults.*;
 
 import java.io.*;
@@ -60,8 +61,8 @@ public class ServerFacade {
             http.connect();
             throwIfNotSuccessful(http);
             return readBody(http, responseClass);
-        } catch (ResponseException ex) {
-            throw ex;
+        } catch (ResponseException ex){
+            throw new ResponseException(ex.statusCode(),ex.getMessage());
         } catch (Exception ex) {
             throw new ResponseException(500, ex.getMessage());
         }
@@ -82,7 +83,7 @@ public class ServerFacade {
         if (!isSuccessful(status)) {
             try (InputStream respErr = http.getErrorStream()) {
                 if (respErr != null) {
-                    throw ResponseException.fromJson(respErr);
+                    throw ResponseException.fromJson(respErr,status);
                 }
             }
 

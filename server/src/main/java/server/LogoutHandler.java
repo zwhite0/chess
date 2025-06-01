@@ -2,7 +2,7 @@ package server;
 
 import com.google.gson.Gson;
 import dataaccess.AuthDAO;
-import dataaccess.DataAccessException;
+import sharedserver.exceptions.DataAccessException;
 import sharedserver.requestsandresults.LogoutRequest;
 import sharedserver.requestsandresults.LogoutResult;
 import service.UserService;

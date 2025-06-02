@@ -4,9 +4,10 @@ import java.util.Scanner;
 
 public class Repl {
     private PreloginUI preloginClient;
+    private Status status = Status.LOGGED_OUT;
 
     public Repl(String serverURL){
-        preloginClient = new PreloginUI(serverURL);
+        preloginClient = new PreloginUI(serverURL, status);
     }
 
     public void run() {
@@ -17,12 +18,17 @@ public class Repl {
         while (!result.equals("quit")) {
             String line = scanner.nextLine();
 
-            try {
-                result = preloginClient.eval(line);
-                System.out.print(result);
-            } catch (Throwable e) {
-                var msg = e.toString();
-                System.out.print(msg);
+            if (status.equals(Status.LOGGED_OUT)) {
+                try {
+                    result = preloginClient.eval(line);
+                    System.out.print(result);
+                } catch (Throwable e) {
+                    var msg = e.toString();
+                    System.out.print(msg);
+                }
+            }
+            if (status.equals(Status.LOGGED_IN)){
+
             }
         }
         System.out.println();

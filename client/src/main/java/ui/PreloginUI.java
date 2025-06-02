@@ -13,7 +13,7 @@ public class PreloginUI {
 
     ServerFacade server;
 
-    public PreloginUI(String serverURL){
+    public PreloginUI(String serverURL, Status status){
         server =  new ServerFacade(serverURL);
     }
 

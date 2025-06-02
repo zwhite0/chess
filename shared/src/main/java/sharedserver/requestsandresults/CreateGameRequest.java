@@ -1,4 +1,4 @@
 package sharedserver.requestsandresults;
 
-public record CreateGameRequest(String gameName) {
+public record CreateGameRequest(String gameName, String authToken) {
 }

@@ -26,7 +26,7 @@ public class GameServiceTests {
         GameService service = new GameService(null, auths, games);
 
         auths.createAuth(new AuthData("authToken","username"));
-        CreateGameRequest request = new CreateGameRequest("my game");
+        CreateGameRequest request = new CreateGameRequest("my game","authToken");
         CreateGameResult result = service.createGame(request, "authToken");
 
         assertNotNull(result.gameID());
@@ -40,7 +40,7 @@ public class GameServiceTests {
         GameService service = new GameService(null, auths, games);
 
         auths.createAuth(new AuthData("authToken","username"));
-        CreateGameRequest request = new CreateGameRequest("my game");
+        CreateGameRequest request = new CreateGameRequest("my game","authToken");
         service.createGame(request, "authToken");
 
         assertThrows (UnauthorizedException.class, () -> {

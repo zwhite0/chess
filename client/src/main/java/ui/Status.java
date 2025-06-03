@@ -1,6 +1,5 @@
 package ui;
 
-public enum Status {
-    LOGGED_OUT,
-    LOGGED_IN
+public class Status {
+    String status;
 }

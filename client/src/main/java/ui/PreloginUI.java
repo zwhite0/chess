@@ -12,8 +12,12 @@ import java.util.Arrays;
 public class PreloginUI {
 
     ServerFacade server;
+    AuthTokenHolder authTokenHolder;
+    Status status;
 
-    public PreloginUI(String serverURL, Status status){
+    public PreloginUI(String serverURL, Status status, AuthTokenHolder authTokenHolder){
+        this.authTokenHolder = authTokenHolder;
+        this.status = status;
         server =  new ServerFacade(serverURL);
     }
 
@@ -37,7 +41,9 @@ public class PreloginUI {
         if (params.length >= 1) {
             LoginRequest loginRequest = new LoginRequest(params[0],params[1]);
             LoginResult loginResult = server.login(loginRequest);
-            return String.format("You signed in as %s.", loginResult.username());
+            authTokenHolder.authToken = loginResult.authToken();
+            status.status = "LOGGED_IN";
+            return String.format("You signed in as %s\n", loginResult.username());
         }
         throw new ResponseException(400, "Expected: <USERNAME> <PASSWORD>");
     }
@@ -46,7 +52,9 @@ public class PreloginUI {
         if (params.length >= 1) {
             RegisterRequest registerRequest = new RegisterRequest(params[0],params[1],params[2]);
             RegisterResult registerResult = server.register(registerRequest);
-            return String.format("You registered a new account as %s.", registerResult.username());
+            authTokenHolder.authToken = registerResult.authToken();
+            status.status = "LOGGED_IN";
+            return String.format("You registered a new account as %s\n", registerResult.username());
         }
         throw new ResponseException(400, "Expected: <USERNAME> <PASSWORD> <EMAIL>");
     }

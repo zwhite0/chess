@@ -34,6 +34,7 @@ public class PostloginUI {
                 case "create" -> createGame(params);
                 case "list" -> listGames();
                 case "join" -> playGame(params);
+                case "observe" -> observeGame(params);
                 case "quit" -> "quit";
                 default -> help();
             };
@@ -58,8 +59,8 @@ public class PostloginUI {
             return String.format(EscapeSequences.RESET_TEXT_COLOR +"Created new game: %s\n" +
                     EscapeSequences.SET_TEXT_COLOR_GREEN + "[LOGGED IN]>>> ", params[0]);
         }
-        throw new ResponseException(400, EscapeSequences.SET_TEXT_COLOR_RED+ "Expected: <NAME>"
-                +EscapeSequences.SET_TEXT_COLOR_GREEN + "[LOGGED OUT]>>> ");
+        throw new ResponseException(400, EscapeSequences.SET_TEXT_COLOR_RED+ "Expected: <NAME>\n"
+                +EscapeSequences.SET_TEXT_COLOR_GREEN + "[LOGGED IN]>>> ");
     }
 
     public String listGames() throws ResponseException {
@@ -84,6 +85,26 @@ public class PostloginUI {
         }
         sb.append(EscapeSequences.SET_TEXT_COLOR_GREEN + "[LOGGED IN]>>> ");
         return sb.toString();
+    }
+
+    public String observeGame(String... params) throws ResponseException {
+        if (params.length > 0){
+            ListGamesResult listGamesResult = server.listGames(new ListGamesRequest(authTokenHolder.authToken));
+            Integer gameNumber = Integer.parseInt(params[0]);
+            Collection<GameData> gameList = listGamesResult.games();
+            Integer i = 1;
+            ChessGame chessGame = null;
+            for (GameData game : gameList){
+                if (i.equals(game.gameID())){
+                    chessGame = game.game();
+                    break;
+                }
+                i++;
+            }
+            return drawWhiteBoard(chessGame.getBoard());
+        }
+        throw new ResponseException(400, EscapeSequences.SET_TEXT_COLOR_RED+ "Expected: <GAME NUMBER>\n"
+                +EscapeSequences.SET_TEXT_COLOR_GREEN + "[LOGGED IN]>>> ");
     }
 
     public String playGame(String... params) throws ResponseException {
@@ -111,7 +132,8 @@ public class PostloginUI {
                 return drawBlackBoard(chessGame.getBoard());
             }
         }
-        throw new ResponseException(400, "Expected: <NAME>");
+        throw new ResponseException(400, EscapeSequences.SET_TEXT_COLOR_RED+ "Expected: <GAME NUMBER>\n"
+                +EscapeSequences.SET_TEXT_COLOR_GREEN + "[LOGGED IN]>>> ");
     }
 
     public String drawWhiteBoard(ChessBoard board) {

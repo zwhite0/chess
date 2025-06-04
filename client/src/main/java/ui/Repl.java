@@ -15,7 +15,8 @@ public class Repl {
     }
 
     public void run() {
-        System.out.println("Welcome to 240 chess. Type Help to get started.");
+        System.out.print("Welcome to 240 chess. Type Help to get started.\n"+
+                EscapeSequences.SET_TEXT_COLOR_GREEN+"[LOGGED OUT]>>> ");
 
         Scanner scanner = new Scanner(System.in);
         var result = "";
@@ -25,19 +26,25 @@ public class Repl {
             if (status.status.equals("LOGGED_OUT")) {
                 try {
                     result = preloginClient.eval(line);
-                    System.out.print(result);
+                    if (!result.equals("quit")) {
+                        System.out.print(result);
+                    }
                 } catch (Throwable e) {
                     var msg = e.toString();
-                    System.out.print(msg);
+                    System.out.print(EscapeSequences.SET_TEXT_COLOR_RED +msg +
+                            EscapeSequences.SET_TEXT_COLOR_GREEN + "[LOGGED OUT]>>> ");
                 }
             }
             if (status.status.equals("LOGGED_IN")){
                 try {
                     result = postloginUI.eval(line);
-                    System.out.print(result);
+                    if (!result.equals("quit")) {
+                        System.out.print(result);
+                    }
                 } catch (Throwable e){
                     var msg = e.toString();
-                    System.out.print(msg);
+                    System.out.print(EscapeSequences.SET_TEXT_COLOR_RED +msg +
+                            EscapeSequences.SET_TEXT_COLOR_GREEN + "[LOGGED IN]>>> ");
                 }
             }
         }

@@ -7,6 +7,7 @@ import model.GameData;
 import sharedserver.ServerFacade;
 import sharedserver.exceptions.ResponseException;
 import sharedserver.requestsandresults.*;
+import ui.EscapeSequences;
 
 import java.util.ArrayList;
 import java.util.Arrays;

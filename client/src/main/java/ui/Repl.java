@@ -26,7 +26,10 @@ public class Repl {
             if (status.status.equals("LOGGED_OUT")) {
                 try {
                     result = preloginClient.eval(line);
-                    if (!result.equals("quit")) {
+                    if (result.startsWith("Error:")){
+                        System.out.print(EscapeSequences.SET_TEXT_COLOR_RED +result + "\n"+
+                                EscapeSequences.SET_TEXT_COLOR_GREEN + "[LOGGED OUT]>>> ");
+                    } else if (!result.equals("quit")) {
                         System.out.print(result);
                     }
                 } catch (Throwable e) {

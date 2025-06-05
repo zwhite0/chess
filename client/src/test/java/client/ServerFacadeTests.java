@@ -141,6 +141,19 @@ public class ServerFacadeTests {
     }
 
     @Test
+    public void joinGameFailureUnauthorized() throws ResponseException {
+        RegisterRequest registerRequest = new RegisterRequest("Jeffrey", "password", "Jeffrey@email.com");
+        facade.register(registerRequest);
+        LoginRequest loginRequest = new LoginRequest("Jeffrey", "password");
+        LoginResult loginResult = facade.login(loginRequest);
+        CreateGameRequest createGameRequest = new CreateGameRequest("myFunGame", loginResult.authToken());
+        CreateGameResult createGameResult = facade.createGame(createGameRequest);
+        JoinGameRequest joinGameRequest = new JoinGameRequest("notAnAuthToken", "WHITE", createGameResult.gameID());
+        ResponseException ex = Assertions.assertThrows(ResponseException.class, () -> facade.joinGame(joinGameRequest));
+        Assertions.assertEquals(401, ex.statusCode());
+    }
+
+    @Test
     public void listGamesSuccess() throws ResponseException {
         RegisterRequest registerRequest = new RegisterRequest("Jeffrey", "password", "Jeffrey@email.com");
         facade.register(registerRequest);
@@ -169,4 +182,15 @@ public class ServerFacadeTests {
         ResponseException ex = Assertions.assertThrows(ResponseException.class, () -> facade.listGames(listGamesRequest));
         Assertions.assertEquals(401, ex.statusCode());
     }
+
+    @Test
+    public void clearSuccess() throws ResponseException {
+        RegisterRequest registerRequest = new RegisterRequest("Jeffrey", "password", "Jeffrey@email.com");
+        facade.register(registerRequest);
+        facade.clear(new ClearRequest());
+        ResponseException ex = Assertions.assertThrows(ResponseException.class, () -> facade.login(new LoginRequest("Jeffrey","password")));
+        Assertions.assertEquals(401, ex.statusCode());
+    }
+
+
 }

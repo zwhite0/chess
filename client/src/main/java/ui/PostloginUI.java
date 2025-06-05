@@ -54,7 +54,7 @@ public class PostloginUI {
     }
 
     public String createGame(String... params) throws ResponseException {
-        if (params.length >= 1) {
+        if (params.length == 1) {
             CreateGameRequest createGameRequest = new CreateGameRequest(params[0],authTokenHolder.authToken);
             server.createGame(createGameRequest);
             return String.format(EscapeSequences.RESET_TEXT_COLOR +"Created new game: %s\n" +
@@ -89,18 +89,22 @@ public class PostloginUI {
     }
 
     public String observeGame(String... params) throws ResponseException {
-        if (params.length > 0){
+        if (params.length == 1){
             ListGamesResult listGamesResult = server.listGames(new ListGamesRequest(authTokenHolder.authToken));
             Integer gameNumber = Integer.parseInt(params[0]);
             Collection<GameData> gameList = listGamesResult.games();
             Integer i = 1;
             ChessGame chessGame = null;
             for (GameData game : gameList){
-                if (i.equals(game.gameID())){
+                if (i.equals(gameNumber)){
                     chessGame = game.game();
                     break;
                 }
                 i++;
+            }
+            if (chessGame==null){
+                throw new ResponseException(400, EscapeSequences.SET_TEXT_COLOR_RED+ "Error: Game doesn't exist\n"
+                        +EscapeSequences.SET_TEXT_COLOR_GREEN + "[LOGGED IN]>>> ");
             }
             return drawWhiteBoard(chessGame.getBoard());
         }
@@ -109,7 +113,13 @@ public class PostloginUI {
     }
 
     public String playGame(String... params) throws ResponseException {
-        if (params.length > 1){
+        try {
+            Integer.parseInt(params[0]);
+        } catch (NumberFormatException e){
+            throw new ResponseException(400, EscapeSequences.SET_TEXT_COLOR_RED+ "Expected: <GAME NUMBER> [WHITE|BLACK]\n"
+                    +EscapeSequences.SET_TEXT_COLOR_GREEN + "[LOGGED IN]>>> ");
+        }
+        if (params.length == 2){
             Integer gameNumber = Integer.parseInt(params[0]);
             ListGamesResult listGamesResult = server.listGames(new ListGamesRequest(authTokenHolder.authToken));
             Collection<GameData> gameList = listGamesResult.games();
@@ -133,7 +143,7 @@ public class PostloginUI {
                 return drawBlackBoard(chessGame.getBoard());
             }
         }
-        throw new ResponseException(400, EscapeSequences.SET_TEXT_COLOR_RED+ "Expected: <GAME NUMBER>\n"
+        throw new ResponseException(400, EscapeSequences.SET_TEXT_COLOR_RED+ "Expected: <GAME NUMBER> [WHITE|BLACK]\n"
                 +EscapeSequences.SET_TEXT_COLOR_GREEN + "[LOGGED IN]>>> ");
     }
 

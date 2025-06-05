@@ -39,7 +39,7 @@ public class PreloginUI {
     }
 
     public String login(String... params) throws ResponseException {
-        if (params.length >= 1) {
+        if (params.length == 2) {
             LoginRequest loginRequest = new LoginRequest(params[0],params[1]);
             LoginResult loginResult = server.login(loginRequest);
             authTokenHolder.authToken = loginResult.authToken();
@@ -51,7 +51,7 @@ public class PreloginUI {
     }
 
     public String register(String... params) throws ResponseException {
-        if (params.length >= 1) {
+        if (params.length == 3) {
             RegisterRequest registerRequest = new RegisterRequest(params[0],params[1],params[2]);
             RegisterResult registerResult = server.register(registerRequest);
             authTokenHolder.authToken = registerResult.authToken();

@@ -12,6 +12,7 @@ import java.util.Objects;
  */
 public class ServerMessage {
     ServerMessageType serverMessageType;
+    String message;
 
     public enum ServerMessageType {
         LOAD_GAME,
@@ -46,5 +47,9 @@ public class ServerMessage {
 
     public String toString() {
         return new Gson().toJson(this);
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 }

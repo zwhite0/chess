@@ -46,15 +46,17 @@ public class WebSocketHandler {
         AuthData auth = auths.getAuth(authToken);
         String visitorName = auth.username();
         connections.add(visitorName, session);
-        var message = String.format("%s has joined the game", visitorName);
-        var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
+        String message = String.format("%s has joined the game", visitorName);
+        ServerMessage notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
+        notification.setMessage(message);
         connections.broadcast(visitorName, notification);
     }
 
     private void leave(String visitorName) throws IOException {
         connections.remove(visitorName);
-        var message = String.format("%s has left the game", visitorName);
-        var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
+        String message = String.format("%s has left the game", visitorName);
+        ServerMessage notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
+        notification.setMessage(message);
         connections.broadcast(visitorName, notification);
     }
 

@@ -1,17 +1,24 @@
 package ui;
 
+import ui.websocket.NotificationHandler;
+import ui.websocket.WebSocketFacade;
+import websocket.messages.ServerMessage;
+
 import java.util.Scanner;
 
-public class Repl {
+public class Repl implements NotificationHandler{
     private PreloginUI preloginClient;
     private PostloginUI postloginUI;
+    private InGameUI inGameUI;
     private Status status = new Status();
     private AuthTokenHolder authTokenHolder = new AuthTokenHolder();
+    private WebSocketFacade ws;
 
     public Repl(String serverURL){
         status.status = "LOGGED_OUT";
         preloginClient = new PreloginUI(serverURL, status, authTokenHolder);
-        postloginUI = new PostloginUI(serverURL,status,authTokenHolder);
+        postloginUI = new PostloginUI(serverURL,status,authTokenHolder,ws,this);
+        inGameUI = new InGameUI(serverURL,status,authTokenHolder,ws, this);
     }
 
     public void run() {
@@ -50,7 +57,22 @@ public class Repl {
                             EscapeSequences.SET_TEXT_COLOR_GREEN + "[LOGGED IN]>>> ");
                 }
             }
+            if (status.status.equals("IN_GAME")){
+                try {
+                    result = inGameUI.eval(line);
+                    System.out.print(result);
+                } catch (Throwable e){
+                    var msg = e.toString();
+                    System.out.print(EscapeSequences.SET_TEXT_COLOR_RED +msg +
+                            EscapeSequences.SET_TEXT_COLOR_GREEN + "[CHESS GAME]>>> ");
+                }
+            }
         }
         System.out.println();
+    }
+
+    @Override
+    public void notify(ServerMessage notification) {
+        System.out.print(EscapeSequences.SET_TEXT_COLOR_RED + notification.getMessage());
     }
 }

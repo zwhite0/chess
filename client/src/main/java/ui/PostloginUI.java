@@ -8,6 +8,8 @@ import sharedserver.ServerFacade;
 import sharedserver.exceptions.ResponseException;
 import sharedserver.requestsandresults.*;
 import ui.EscapeSequences;
+import ui.websocket.NotificationHandler;
+import ui.websocket.WebSocketFacade;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,13 +18,20 @@ import java.util.Collection;
 public class PostloginUI {
 
     ServerFacade server;
+    String serverURL;
     Status status;
     AuthTokenHolder authTokenHolder;
+    WebSocketFacade ws;
+    NotificationHandler notificationHandler;
 
-    public PostloginUI(String serverURL, Status status, AuthTokenHolder authTokenHolder){
+    public PostloginUI(String serverURL, Status status, AuthTokenHolder authTokenHolder,
+                       WebSocketFacade ws, NotificationHandler notificationHandler){
         server =  new ServerFacade(serverURL);
+        this.serverURL = serverURL;
         this.status = status;
         this.authTokenHolder = authTokenHolder;
+        this.ws = ws;
+        this.notificationHandler = notificationHandler;
     }
 
     public String eval(String input) {
@@ -136,12 +145,16 @@ public class PostloginUI {
             }
             JoinGameRequest joinGameRequest = new JoinGameRequest(authTokenHolder.authToken, params[1].toUpperCase(),gameID);
             server.joinGame(joinGameRequest);
+            ws = new WebSocketFacade(serverURL,notificationHandler);
+            ws.connect(authTokenHolder.authToken, gameID);
+            status.status = "IN_GAME";
             if (params[1].equals("white") && chessGame != null){
                 return drawWhiteBoard(chessGame.getBoard());
             }
             if (params[1].equals("black") && chessGame != null) {
                 return drawBlackBoard(chessGame.getBoard());
             }
+
         }
         throw new ResponseException(400, EscapeSequences.SET_TEXT_COLOR_RED+ "Expected: <GAME NUMBER> [WHITE|BLACK]\n"
                 +EscapeSequences.SET_TEXT_COLOR_GREEN + "[LOGGED IN]>>> ");

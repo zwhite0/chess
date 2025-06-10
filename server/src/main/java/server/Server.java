@@ -8,12 +8,14 @@ import sharedserver.exceptions.DataAccessException;
 import sharedserver.exceptions.UnauthorizedException;
 import sharedserver.requestsandresults.ErrorResponse;
 import spark.*;
+import server.websocket.WebSocketHandler;
 
 public class Server {
 
     UserDAO users;
     AuthDAO auths;
     GameDAO games;
+    WebSocketHandler webSocketHandler = new WebSocketHandler();
 
     {
         try {
@@ -30,6 +32,8 @@ public class Server {
         Spark.port(desiredPort);
 
         Spark.staticFiles.location("web");
+
+        Spark.webSocket("/ws", webSocketHandler);
 
         // Register your endpoints and handle exceptions here.
         Spark.post("/user", (request, response) ->{

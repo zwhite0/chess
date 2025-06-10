@@ -13,6 +13,7 @@ public class InGameUI {
     AuthTokenHolder authTokenHolder;
     WebSocketFacade ws;
     NotificationHandler notificationHandler;
+    Boolean observing;
 
     public InGameUI(String serverURL, Status status, AuthTokenHolder authTokenHolder,
                     WebSocketFacade ws, NotificationHandler notificationHandler){
@@ -28,12 +29,18 @@ public class InGameUI {
             var tokens = input.toLowerCase().split(" ");
             var cmd = (tokens.length > 0) ? tokens[0] : "help";
             var params = Arrays.copyOfRange(tokens, 1, tokens.length);
-            return switch (cmd) {
-                default -> help();
-            };
+            if (!observing) {
+                return switch (cmd) {
+                    default -> help();
+                };
+            } else {
+                return switch (cmd) {
+                    default -> helpObserving();
+                };
 //        } catch (ResponseException ex) {
 //            return ex.getMessage();
 //        }
+        }
     }
 
     public String help() {
@@ -53,5 +60,22 @@ public class InGameUI {
                         EscapeSequences.SET_TEXT_COLOR_LIGHT_GREY + "- with possible commands\n"+
                         EscapeSequences.SET_TEXT_COLOR_GREEN + "[CHESS GAME]>>> "
                 ;
+    }
+
+    public String helpObserving() {
+        return
+                EscapeSequences.RESET_TEXT_COLOR + "Possible commands:\n"+
+                        EscapeSequences.SET_TEXT_COLOR_BLUE + "redraw " +
+                        EscapeSequences.SET_TEXT_COLOR_LIGHT_GREY + "- the chess board\n"+
+                        EscapeSequences.SET_TEXT_COLOR_BLUE + "leave "+
+                        EscapeSequences.SET_TEXT_COLOR_LIGHT_GREY + "- the chess game\n"+
+                        EscapeSequences.SET_TEXT_COLOR_BLUE + "help "+
+                        EscapeSequences.SET_TEXT_COLOR_LIGHT_GREY + "- with possible commands\n"+
+                        EscapeSequences.SET_TEXT_COLOR_GREEN + "[CHESS GAME]>>> "
+                ;
+    }
+
+    public void setObserving(Boolean observing) {
+        this.observing = observing;
     }
 }

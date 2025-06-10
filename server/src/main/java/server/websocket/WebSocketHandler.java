@@ -1,5 +1,6 @@
 package server.websocket;
 
+import chess.ChessMove;
 import com.google.gson.Gson;
 import dataaccess.*;
 import model.AuthData;
@@ -39,6 +40,7 @@ public class WebSocketHandler {
         switch (command.getCommandType()) {
             case CONNECT -> connect(command.getAuthToken(), session);
             case LEAVE -> leave(command.getAuthToken());
+            case MAKE_MOVE -> move(command.getAuthToken(), command.getMove());
         }
     }
 
@@ -52,12 +54,18 @@ public class WebSocketHandler {
         connections.broadcast(visitorName, notification);
     }
 
-    private void leave(String visitorName) throws IOException {
+    private void leave(String authToken) throws IOException, DataAccessException {
+        AuthData auth = auths.getAuth(authToken);
+        String visitorName = auth.username();
         connections.remove(visitorName);
         String message = String.format("%s has left the game", visitorName);
         ServerMessage notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
         notification.setMessage(message);
         connections.broadcast(visitorName, notification);
+    }
+
+    private void move(String authToken, ChessMove chessMove){
+
     }
 
 //    public void makeNoise(String petName, String sound) throws ResponseException {

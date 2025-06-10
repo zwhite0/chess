@@ -58,7 +58,19 @@ public class Repl implements NotificationHandler{
                 }
             }
             if (status.status.equals("IN_GAME")){
+                inGameUI.observing = false;
                 try {
+                    result = inGameUI.eval(line);
+                    System.out.print(result);
+                } catch (Throwable e){
+                    var msg = e.toString();
+                    System.out.print(EscapeSequences.SET_TEXT_COLOR_RED +msg +
+                            EscapeSequences.SET_TEXT_COLOR_GREEN + "[CHESS GAME]>>> ");
+                }
+            }
+            if (status.status.equals("OBSERVING_GAME")){
+                inGameUI.observing = true;
+                try{
                     result = inGameUI.eval(line);
                     System.out.print(result);
                 } catch (Throwable e){

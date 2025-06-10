@@ -103,18 +103,23 @@ public class PostloginUI {
             Integer gameNumber = Integer.parseInt(params[0]);
             Collection<GameData> gameList = listGamesResult.games();
             Integer i = 1;
+            int gameID = -1;
             ChessGame chessGame = null;
             for (GameData game : gameList){
                 if (i.equals(gameNumber)){
                     chessGame = game.game();
+                    gameID = game.gameID();
                     break;
                 }
                 i++;
             }
             if (chessGame==null){
                 throw new ResponseException(400, EscapeSequences.SET_TEXT_COLOR_RED+ "Error: Game doesn't exist\n"
-                        +EscapeSequences.SET_TEXT_COLOR_GREEN + "[LOGGED IN]>>> ");
+                        +EscapeSequences.SET_TEXT_COLOR_GREEN + "[CHESS GAME]>>> ");
             }
+            ws = new WebSocketFacade(serverURL,notificationHandler);
+            ws.connect(authTokenHolder.authToken, gameID);
+            status.status = "OBSERVING_GAME";
             return drawWhiteBoard(chessGame.getBoard());
         }
         throw new ResponseException(400, EscapeSequences.SET_TEXT_COLOR_RED+ "Expected: <GAME NUMBER>\n"

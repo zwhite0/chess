@@ -23,6 +23,7 @@ public class PostloginUI {
     AuthTokenHolder authTokenHolder;
     WebSocketFacade ws;
     NotificationHandler notificationHandler;
+    int gameID;
 
     public PostloginUI(String serverURL, Status status, AuthTokenHolder authTokenHolder,
                        WebSocketFacade ws, NotificationHandler notificationHandler){
@@ -98,17 +99,17 @@ public class PostloginUI {
     }
 
     public String observeGame(String... params) throws ResponseException {
+        this.gameID = -1;
         if (params.length == 1){
             ListGamesResult listGamesResult = server.listGames(new ListGamesRequest(authTokenHolder.authToken));
             Integer gameNumber = Integer.parseInt(params[0]);
             Collection<GameData> gameList = listGamesResult.games();
             Integer i = 1;
-            int gameID = -1;
             ChessGame chessGame = null;
             for (GameData game : gameList){
                 if (i.equals(gameNumber)){
                     chessGame = game.game();
-                    gameID = game.gameID();
+                    this.gameID = game.gameID();
                     break;
                 }
                 i++;
@@ -118,7 +119,7 @@ public class PostloginUI {
                         +EscapeSequences.SET_TEXT_COLOR_GREEN + "[CHESS GAME]>>> ");
             }
             ws = new WebSocketFacade(serverURL,notificationHandler);
-            ws.connect(authTokenHolder.authToken, gameID);
+            ws.connect(authTokenHolder.authToken, this.gameID);
             status.status = "OBSERVING_GAME";
             return drawWhiteBoard(chessGame.getBoard());
         }
@@ -127,6 +128,7 @@ public class PostloginUI {
     }
 
     public String playGame(String... params) throws ResponseException {
+        this.gameID = -1;
         try {
             Integer.parseInt(params[0]);
         } catch (NumberFormatException e){
@@ -138,11 +140,10 @@ public class PostloginUI {
             ListGamesResult listGamesResult = server.listGames(new ListGamesRequest(authTokenHolder.authToken));
             Collection<GameData> gameList = listGamesResult.games();
             Integer i = 1;
-            Integer gameID = -1;
             ChessGame chessGame = null;
             for (GameData game : gameList){
                 if (i == gameNumber){
-                    gameID = game.gameID();
+                    this.gameID = game.gameID();
                     chessGame = game.game();
                     break;
                 }
@@ -151,7 +152,7 @@ public class PostloginUI {
             JoinGameRequest joinGameRequest = new JoinGameRequest(authTokenHolder.authToken, params[1].toUpperCase(),gameID);
             server.joinGame(joinGameRequest);
             ws = new WebSocketFacade(serverURL,notificationHandler);
-            ws.connect(authTokenHolder.authToken, gameID);
+            ws.connect(authTokenHolder.authToken, this.gameID);
             status.status = "IN_GAME";
             if (params[1].equals("white") && chessGame != null){
                 return drawWhiteBoard(chessGame.getBoard());

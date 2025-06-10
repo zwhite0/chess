@@ -9,11 +9,13 @@ import java.util.Arrays;
 
 public class InGameUI {
     ServerFacade server;
+    String serverURL;
     Status status;
     AuthTokenHolder authTokenHolder;
     WebSocketFacade ws;
     NotificationHandler notificationHandler;
     Boolean observing;
+    int gameID;
 
     public InGameUI(String serverURL, Status status, AuthTokenHolder authTokenHolder,
                     WebSocketFacade ws, NotificationHandler notificationHandler){
@@ -22,25 +24,35 @@ public class InGameUI {
         this.authTokenHolder = authTokenHolder;
         this.ws = ws;
         this.notificationHandler = notificationHandler;
+        this.serverURL = serverURL;
     }
 
-    public String eval(String input) {
+    public String eval(String input) throws ResponseException {
 //        try {
             var tokens = input.toLowerCase().split(" ");
             var cmd = (tokens.length > 0) ? tokens[0] : "help";
             var params = Arrays.copyOfRange(tokens, 1, tokens.length);
             if (!observing) {
                 return switch (cmd) {
+                    case "leave" -> leave();
                     default -> help();
                 };
             } else {
                 return switch (cmd) {
+                    case "leave" -> leave();
                     default -> helpObserving();
                 };
 //        } catch (ResponseException ex) {
 //            return ex.getMessage();
 //        }
         }
+    }
+
+    public String leave() throws ResponseException {
+        ws = new WebSocketFacade(serverURL,notificationHandler);
+        ws.leave(authTokenHolder.authToken, this.gameID);
+        status.status = "LOGGED_IN";
+        return EscapeSequences.SET_TEXT_COLOR_GREEN + "[LOGGED IN]>>> ";
     }
 
     public String help() {
@@ -64,7 +76,7 @@ public class InGameUI {
 
     public String helpObserving() {
         return
-                EscapeSequences.RESET_TEXT_COLOR + "Possible commands:\n"+
+                EscapeSequences.RESET_TEXT_COLOR + "As an observer these are your only possible commands:\n"+
                         EscapeSequences.SET_TEXT_COLOR_BLUE + "redraw " +
                         EscapeSequences.SET_TEXT_COLOR_LIGHT_GREY + "- the chess board\n"+
                         EscapeSequences.SET_TEXT_COLOR_BLUE + "leave "+

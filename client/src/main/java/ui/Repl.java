@@ -48,6 +48,7 @@ public class Repl implements NotificationHandler{
             if (status.status.equals("LOGGED_IN")){
                 try {
                     result = postloginUI.eval(line);
+                    inGameUI.gameID = postloginUI.gameID;
                     if (!result.equals("quit")) {
                         System.out.print(result);
                     }

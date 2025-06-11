@@ -1,5 +1,7 @@
 package ui;
 
+import chess.ChessMove;
+import chess.ChessPosition;
 import sharedserver.ServerFacade;
 import sharedserver.exceptions.ResponseException;
 import ui.websocket.NotificationHandler;
@@ -28,13 +30,14 @@ public class InGameUI {
     }
 
     public String eval(String input) throws ResponseException {
-//        try {
+        try {
             var tokens = input.toLowerCase().split(" ");
             var cmd = (tokens.length > 0) ? tokens[0] : "help";
             var params = Arrays.copyOfRange(tokens, 1, tokens.length);
             if (!observing) {
                 return switch (cmd) {
                     case "leave" -> leave();
+                    case "move" -> move(params);
                     default -> help();
                 };
             } else {
@@ -42,17 +45,53 @@ public class InGameUI {
                     case "leave" -> leave();
                     default -> helpObserving();
                 };
-//        } catch (ResponseException ex) {
-//            return ex.getMessage();
-//        }
+            }
+        } catch (ResponseException ex) {
+            return ex.getMessage();
         }
     }
 
     public String leave() throws ResponseException {
-        ws = new WebSocketFacade(serverURL,notificationHandler);
         ws.leave(authTokenHolder.authToken, this.gameID);
         status.status = "LOGGED_IN";
         return EscapeSequences.SET_TEXT_COLOR_GREEN + "[LOGGED IN]>>> ";
+    }
+
+    public String move(String... params) throws ResponseException {
+        if (params.length == 2){
+            int startingRow = Character.getNumericValue(params[0].charAt(1));
+            int endingRow = Character.getNumericValue(params[1].charAt(1));
+            ChessPosition startingPosition = makeChessPosition(params[0].charAt(0),startingRow);
+            ChessPosition endingPosition = makeChessPosition(params[1].charAt(0),endingRow);
+            ChessMove move = new ChessMove(startingPosition,endingPosition, null);
+            ws.move(authTokenHolder.authToken,this.gameID,move);
+            return "done";
+        } else {
+            throw new ResponseException(400, EscapeSequences.SET_TEXT_COLOR_RED + "Expected: PARAMS<YOUR PIECE'S SQUARE> <SQUARE TO MOVE TO>\n"
+                    + EscapeSequences.SET_TEXT_COLOR_GREEN + "[CHESS GAME]>>> ");
+        }
+    }
+
+    public ChessPosition makeChessPosition(char col, int row) throws ResponseException {
+        int endingCol;
+        switch (col) {
+            case 'a' -> endingCol = 1;
+            case 'b' -> endingCol = 2;
+            case 'c' -> endingCol = 3;
+            case 'd' -> endingCol = 4;
+            case 'e' -> endingCol = 5;
+            case 'f' -> endingCol = 6;
+            case 'g' -> endingCol = 7;
+            case 'h' -> endingCol = 8;
+            default -> throw new ResponseException(400, EscapeSequences.SET_TEXT_COLOR_RED+
+                    "Expected: COLUMN<YOUR PIECE'S SQUARE> <SQUARE TO MOVE TO>\n" +EscapeSequences.SET_TEXT_COLOR_GREEN + "[CHESS GAME]>>> ");
+        }
+        if (row > 8 || row <1){
+            System.out.println(row);
+            throw new ResponseException(400, EscapeSequences.SET_TEXT_COLOR_RED+ "Expected: ROWS<YOUR PIECE'S SQUARE> <SQUARE TO MOVE TO>\n"
+                    +EscapeSequences.SET_TEXT_COLOR_GREEN + "[CHESS GAME]>>> ");
+        }
+        return new ChessPosition(row,endingCol);
     }
 
     public String help() {

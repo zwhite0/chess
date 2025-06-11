@@ -1,9 +1,11 @@
 package server.websocket;
 
 import chess.ChessMove;
+import chess.InvalidMoveException;
 import com.google.gson.Gson;
 import dataaccess.*;
 import model.AuthData;
+import model.GameData;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
@@ -42,12 +44,12 @@ public class WebSocketHandler {
     }
 
     @OnWebSocketMessage
-    public void onMessage(Session session, String message) throws IOException, DataAccessException {
+    public void onMessage(Session session, String message) throws IOException, DataAccessException, InvalidMoveException {
         UserGameCommand command = new Gson().fromJson(message, UserGameCommand.class);
         switch (command.getCommandType()) {
             case CONNECT -> connect(command.getAuthToken(), session, command.getGameID());
             case LEAVE -> leave(command.getAuthToken(), command.getGameID());
-            case MAKE_MOVE -> move(command.getAuthToken(), command.getMove());
+            case MAKE_MOVE -> move(command.getAuthToken(), command.getMove(), command.getGameID());
         }
     }
 
@@ -79,8 +81,15 @@ public class WebSocketHandler {
         connections.remove(visitorName);
     }
 
-    private void move(String authToken, ChessMove chessMove){
-
+    private void move(String authToken, ChessMove chessMove, int gameID) throws DataAccessException, IOException, InvalidMoveException {
+        AuthData auth = auths.getAuth(authToken);
+        String visitorName = auth.username();
+        String message = String.format("%s has made a move", visitorName);
+        GameData game = games.getGame(gameID);
+        game.game().makeMove(chessMove);
+        ServerMessage update = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME);
+        connections.broadcast(visitorName, update, gameIdToSessions.get(gameID));
+        update.setMessage(message);
     }
 
 //    public void makeNoise(String petName, String sound) throws ResponseException {

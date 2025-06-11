@@ -1,5 +1,6 @@
 package ui;
 
+import sharedserver.exceptions.ResponseException;
 import ui.websocket.NotificationHandler;
 import ui.websocket.WebSocketFacade;
 import websocket.messages.ServerMessage;
@@ -14,8 +15,9 @@ public class Repl implements NotificationHandler{
     private AuthTokenHolder authTokenHolder = new AuthTokenHolder();
     private WebSocketFacade ws;
 
-    public Repl(String serverURL){
+    public Repl(String serverURL) throws ResponseException {
         status.status = "LOGGED_OUT";
+        ws = new WebSocketFacade(serverURL,this);
         preloginClient = new PreloginUI(serverURL, status, authTokenHolder);
         postloginUI = new PostloginUI(serverURL,status,authTokenHolder,ws,this);
         inGameUI = new InGameUI(serverURL,status,authTokenHolder,ws, this);

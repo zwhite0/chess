@@ -19,8 +19,8 @@ public class Repl implements NotificationHandler{
         status.status = "LOGGED_OUT";
         ws = new WebSocketFacade(serverURL,this);
         preloginClient = new PreloginUI(serverURL, status, authTokenHolder);
-        postloginUI = new PostloginUI(serverURL,status,authTokenHolder,ws,this);
         inGameUI = new InGameUI(serverURL,status,authTokenHolder,ws, this);
+        postloginUI = new PostloginUI(serverURL,status,authTokenHolder,ws,this, inGameUI);
     }
 
     public void run() {
@@ -88,6 +88,14 @@ public class Repl implements NotificationHandler{
 
     @Override
     public void notify(ServerMessage notification) {
-        System.out.print(EscapeSequences.SET_TEXT_COLOR_RED + notification.getMessage());
+        System.out.print(EscapeSequences.RESET_TEXT_COLOR + notification.getMessage() +
+                EscapeSequences.SET_TEXT_COLOR_GREEN + "[CHESS GAME]>>> ");
+        if (notification.getServerMessageType().equals(ServerMessage.ServerMessageType.LOAD_GAME)) {
+            if (inGameUI.teamColor.equals("white")) {
+                PostloginUI.drawWhiteBoard(inGameUI.chessGame.getBoard());
+            } else if (inGameUI.teamColor.equals("black")) {
+                PostloginUI.drawBlackBoard(inGameUI.chessGame.getBoard());
+            }
+        }
     }
 }

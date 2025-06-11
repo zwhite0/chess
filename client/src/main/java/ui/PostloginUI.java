@@ -23,16 +23,18 @@ public class PostloginUI {
     AuthTokenHolder authTokenHolder;
     WebSocketFacade ws;
     NotificationHandler notificationHandler;
+    InGameUI inGameUI;
     int gameID;
 
     public PostloginUI(String serverURL, Status status, AuthTokenHolder authTokenHolder,
-                       WebSocketFacade ws, NotificationHandler notificationHandler){
+                       WebSocketFacade ws, NotificationHandler notificationHandler, InGameUI inGameUI){
         server =  new ServerFacade(serverURL);
         this.serverURL = serverURL;
         this.status = status;
         this.authTokenHolder = authTokenHolder;
         this.ws = ws;
         this.notificationHandler = notificationHandler;
+        this.inGameUI = inGameUI;
     }
 
     public String eval(String input) {
@@ -155,9 +157,13 @@ public class PostloginUI {
             ws.connect(authTokenHolder.authToken, this.gameID);
             status.status = "IN_GAME";
             if (params[1].equals("white") && chessGame != null){
+                inGameUI.chessGame = chessGame;
+                inGameUI.teamColor = "white";
                 return drawWhiteBoard(chessGame.getBoard());
             }
             if (params[1].equals("black") && chessGame != null) {
+                inGameUI.chessGame = chessGame;
+                inGameUI.teamColor = "black";
                 return drawBlackBoard(chessGame.getBoard());
             }
 
@@ -166,7 +172,7 @@ public class PostloginUI {
                 +EscapeSequences.SET_TEXT_COLOR_GREEN + "[LOGGED IN]>>> ");
     }
 
-    public String drawWhiteBoard(ChessBoard board) {
+    public static String drawWhiteBoard(ChessBoard board) {
         ChessPiece[][] squares = board.getSquares();
         StringBuilder sb = new StringBuilder();
         sb.append(EscapeSequences.SET_BG_COLOR_LIGHT_GREY+EscapeSequences.RESET_TEXT_COLOR+
@@ -189,7 +195,7 @@ public class PostloginUI {
         return sb.toString();
     }
 
-    public String drawBlackBoard(ChessBoard board) {
+    public static String drawBlackBoard(ChessBoard board) {
         ChessPiece[][] squares = board.getSquares();
         StringBuilder sb = new StringBuilder();
         sb.append(EscapeSequences.SET_BG_COLOR_LIGHT_GREY+EscapeSequences.RESET_TEXT_COLOR+
@@ -214,7 +220,7 @@ public class PostloginUI {
 
 
 
-    public String drawRowWhiteFirst(ChessPiece[] row, boolean backwards){
+    public static String drawRowWhiteFirst(ChessPiece[] row, boolean backwards){
         StringBuilder sb = new StringBuilder();
         int x = 0;
         if (backwards){
@@ -232,7 +238,7 @@ public class PostloginUI {
         return sb.toString();
     }
 
-    public String drawRowBlackFirst(ChessPiece[] row,boolean backwards){
+    public static String drawRowBlackFirst(ChessPiece[] row,boolean backwards){
         StringBuilder sb = new StringBuilder();
         int x = 0;
         if (backwards){
@@ -250,7 +256,7 @@ public class PostloginUI {
         return sb.toString();
     }
 
-    public String drawWhiteSquare(ChessPiece square){
+    public static String drawWhiteSquare(ChessPiece square){
         String whiteSquare;
         if (square == null) {
             whiteSquare = EscapeSequences.SET_BG_COLOR_WHITE + "   ";
@@ -261,7 +267,7 @@ public class PostloginUI {
         return whiteSquare;
     }
 
-    public String drawBlackSquare(ChessPiece square){
+    public static String drawBlackSquare(ChessPiece square){
         String blackSquare;
         if (square == null) {
             blackSquare = EscapeSequences.SET_BG_COLOR_BLACK + "   ";
@@ -272,7 +278,7 @@ public class PostloginUI {
         return blackSquare;
     }
     
-    public String getPieceSequence (ChessPiece piece){
+    public static String getPieceSequence (ChessPiece piece){
         String pieceSequence = " ";
         if (piece.getTeamColor().equals(ChessGame.TeamColor.WHITE)){
 

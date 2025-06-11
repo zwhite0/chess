@@ -1,7 +1,9 @@
 package ui;
 
+import chess.ChessGame;
 import chess.ChessMove;
 import chess.ChessPosition;
+import chess.InvalidMoveException;
 import sharedserver.ServerFacade;
 import sharedserver.exceptions.ResponseException;
 import ui.websocket.NotificationHandler;
@@ -18,6 +20,8 @@ public class InGameUI {
     NotificationHandler notificationHandler;
     Boolean observing;
     int gameID;
+    String teamColor;
+    ChessGame chessGame;
 
     public InGameUI(String serverURL, Status status, AuthTokenHolder authTokenHolder,
                     WebSocketFacade ws, NotificationHandler notificationHandler){
@@ -38,15 +42,17 @@ public class InGameUI {
                 return switch (cmd) {
                     case "leave" -> leave();
                     case "move" -> move(params);
+                    case "redraw" -> redraw();
                     default -> help();
                 };
             } else {
                 return switch (cmd) {
                     case "leave" -> leave();
+                    case "redraw" -> redraw();
                     default -> helpObserving();
                 };
             }
-        } catch (ResponseException ex) {
+        } catch (ResponseException | InvalidMoveException ex) {
             return ex.getMessage();
         }
     }
@@ -57,13 +63,14 @@ public class InGameUI {
         return EscapeSequences.SET_TEXT_COLOR_GREEN + "[LOGGED IN]>>> ";
     }
 
-    public String move(String... params) throws ResponseException {
+    public String move(String... params) throws ResponseException, InvalidMoveException {
         if (params.length == 2){
             int startingRow = Character.getNumericValue(params[0].charAt(1));
             int endingRow = Character.getNumericValue(params[1].charAt(1));
             ChessPosition startingPosition = makeChessPosition(params[0].charAt(0),startingRow);
             ChessPosition endingPosition = makeChessPosition(params[1].charAt(0),endingRow);
             ChessMove move = new ChessMove(startingPosition,endingPosition, null);
+            chessGame.makeMove(move);
             ws.move(authTokenHolder.authToken,this.gameID,move);
             return "done";
         } else {
@@ -92,6 +99,16 @@ public class InGameUI {
                     +EscapeSequences.SET_TEXT_COLOR_GREEN + "[CHESS GAME]>>> ");
         }
         return new ChessPosition(row,endingCol);
+    }
+
+    public String redraw() throws ResponseException {
+        if (this.teamColor.equals("white")){
+            return PostloginUI.drawWhiteBoard(this.chessGame.getBoard());
+        }
+        if (this.teamColor.equals("black")){
+            return PostloginUI.drawBlackBoard(this.chessGame.getBoard());
+        }
+        throw new ResponseException(400, "Board not found");
     }
 
     public String help() {

@@ -87,18 +87,10 @@ public class WebSocketHandler {
         String message = String.format("%s has made a move", visitorName);
         GameData game = games.getGame(gameID);
         game.game().makeMove(chessMove);
+        games.updateGame(game);
         ServerMessage update = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME);
-        connections.broadcast(visitorName, update, gameIdToSessions.get(gameID));
         update.setMessage(message);
+        connections.broadcast(visitorName, update, gameIdToSessions.get(gameID));
     }
 
-//    public void makeNoise(String petName, String sound) throws ResponseException {
-//        try {
-//            var message = String.format("%s says %s", petName, sound);
-//            var notification = new Notification(Notification.Type.NOISE, message);
-//            connections.broadcast("", notification);
-//        } catch (Exception ex) {
-//            throw new ResponseException(500, ex.getMessage());
-//        }
-//    }
 }

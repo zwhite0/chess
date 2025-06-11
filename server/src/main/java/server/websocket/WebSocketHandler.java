@@ -77,6 +77,14 @@ public class WebSocketHandler {
         String visitorName = auth.username();
         String message = String.format("%s has left the game", visitorName);
         ServerMessage notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
+        GameData game = games.getGame(gameID);
+        GameData updatedGame;
+        if (visitorName.equalsIgnoreCase(game.whiteUsername())){
+            updatedGame =new GameData(gameID,null,game.blackUsername(),game.gameName(),game.game());
+        } else {
+            updatedGame =new GameData(gameID,game.whiteUsername(),null,game.gameName(),game.game());
+        }
+        games.updateGame(updatedGame);
         notification.setMessage(message);
         connections.broadcast(visitorName, notification, gameIdToSessions.get(gameID));
         connections.remove(visitorName);

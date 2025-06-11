@@ -100,6 +100,11 @@ public class Repl implements NotificationHandler{
                 System.out.print(PostloginUI.drawBlackBoard(inGameUI.chessGame.getBoard()));
             }
         }
-        System.out.print(EscapeSequences.SET_TEXT_COLOR_GREEN + "[CHESS GAME]>>> ");
+        if (!notification.isEndGame()) {
+            System.out.print(EscapeSequences.SET_TEXT_COLOR_GREEN + "[CHESS GAME]>>> ");
+        } else {
+            status.status = "LOGGED_IN";
+            System.out.print(EscapeSequences.SET_TEXT_COLOR_GREEN + "[LOGGED IN]>>> ");
+        }
     }
 }

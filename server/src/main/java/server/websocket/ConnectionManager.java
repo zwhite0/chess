@@ -32,10 +32,23 @@ public class ConnectionManager {
                 removeList.add(c);
             }
         }
+        if (message.isEndGame()){
+            for (Session session : sessions){
+                session.close();
+            }
+        }
 
         // Clean up any connections that were left open.
         for (var c : removeList) {
             connections.remove(c.visitorName);
+        }
+    }
+
+    public void sendMessage(String visitorName, ServerMessage message) throws IOException {
+        for (var c : connections.values()){
+            if (c.visitorName.equals(visitorName)){
+                c.send(message.toString());
+            }
         }
     }
 }

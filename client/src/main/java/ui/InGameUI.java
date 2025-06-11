@@ -10,6 +10,7 @@ import ui.websocket.NotificationHandler;
 import ui.websocket.WebSocketFacade;
 
 import java.util.Arrays;
+import java.util.Scanner;
 
 public class InGameUI {
     ServerFacade server;
@@ -43,6 +44,7 @@ public class InGameUI {
                     case "leave" -> leave();
                     case "move" -> move(params);
                     case "redraw" -> redraw();
+                    case "resign" -> resign();
                     default -> help();
                 };
             } else {
@@ -64,22 +66,29 @@ public class InGameUI {
     }
 
     public String move(String... params) throws ResponseException, InvalidMoveException {
-        if (params.length == 2){
-            int startingRow = Character.getNumericValue(params[0].charAt(1));
-            int endingRow = Character.getNumericValue(params[1].charAt(1));
-            ChessPosition startingPosition = makeChessPosition(params[0].charAt(0),startingRow);
-            ChessPosition endingPosition = makeChessPosition(params[1].charAt(0),endingRow);
-            ChessMove move = new ChessMove(startingPosition,endingPosition, null);
-            chessGame.makeMove(move);
-            ws.move(authTokenHolder.authToken,this.gameID,move);
-            if (teamColor.equals("white")){
-                return PostloginUI.drawWhiteBoard(chessGame.getBoard()) + EscapeSequences.SET_TEXT_COLOR_GREEN + "[CHESS GAME]>>> ";
-            } else{
-                return PostloginUI.drawBlackBoard(chessGame.getBoard()) + EscapeSequences.SET_TEXT_COLOR_GREEN + "[CHESS GAME]>>> ";
+        if (!chessGame.getTeamTurn().toString().equals(teamColor.toUpperCase())){
+            return EscapeSequences.SET_TEXT_COLOR_RED + "It's not your turn yet" +EscapeSequences.SET_TEXT_COLOR_GREEN + "\n[CHESS GAME]>>> ";
+        }
+        try {
+            if (params.length == 2) {
+                int startingRow = Character.getNumericValue(params[0].charAt(1));
+                int endingRow = Character.getNumericValue(params[1].charAt(1));
+                ChessPosition startingPosition = makeChessPosition(params[0].charAt(0), startingRow);
+                ChessPosition endingPosition = makeChessPosition(params[1].charAt(0), endingRow);
+                ChessMove move = new ChessMove(startingPosition, endingPosition, null);
+                chessGame.makeMove(move);
+                ws.move(authTokenHolder.authToken, this.gameID, move);
+                if (teamColor.equals("white")) {
+                    return PostloginUI.drawWhiteBoard(chessGame.getBoard()) + EscapeSequences.SET_TEXT_COLOR_GREEN + "[CHESS GAME]>>> ";
+                } else {
+                    return PostloginUI.drawBlackBoard(chessGame.getBoard()) + EscapeSequences.SET_TEXT_COLOR_GREEN + "[CHESS GAME]>>> ";
+                }
+            } else {
+                throw new ResponseException(400, EscapeSequences.SET_TEXT_COLOR_RED + "Expected: <YOUR PIECE'S SQUARE> <SQUARE TO MOVE TO>\n"
+                        + EscapeSequences.SET_TEXT_COLOR_GREEN + "[CHESS GAME]>>> ");
             }
-        } else {
-            throw new ResponseException(400, EscapeSequences.SET_TEXT_COLOR_RED + "Expected: <YOUR PIECE'S SQUARE> <SQUARE TO MOVE TO>\n"
-                    + EscapeSequences.SET_TEXT_COLOR_GREEN + "[CHESS GAME]>>> ");
+        } catch (InvalidMoveException e){
+            return EscapeSequences.SET_TEXT_COLOR_RED + "Invalid Move" +EscapeSequences.SET_TEXT_COLOR_GREEN + "\n[CHESS GAME]>>> ";
         }
     }
 
@@ -113,6 +122,24 @@ public class InGameUI {
             return PostloginUI.drawBlackBoard(this.chessGame.getBoard()) + EscapeSequences.SET_TEXT_COLOR_GREEN + "[CHESS GAME]>>> ";
         }
         throw new ResponseException(400, "Board not found");
+    }
+
+    public String resign() throws ResponseException {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print(EscapeSequences.RESET_TEXT_COLOR + "Do you wish to resign? [YES|NO]\n");
+        String input = "";
+        while (true) {
+            input = scanner.nextLine();
+            if (input.equalsIgnoreCase("yes")) {
+                status.status = "LOGGED_IN";
+                ws.resign(authTokenHolder.authToken, gameID);
+                return "You lose\n" + EscapeSequences.SET_TEXT_COLOR_GREEN + "[LOGGED IN]>>> ";
+            } else if (input.equalsIgnoreCase("no")) {
+                return EscapeSequences.SET_TEXT_COLOR_GREEN + "[CHESS GAME]>>> ";
+            } else {
+                System.out.println(EscapeSequences.SET_TEXT_COLOR_RED + "Expected: [YES|NO}");
+            }
+        }
     }
 
     public String help() {

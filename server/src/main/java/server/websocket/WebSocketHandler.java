@@ -50,6 +50,7 @@ public class WebSocketHandler {
             case CONNECT -> connect(command.getAuthToken(), session, command.getGameID());
             case LEAVE -> leave(command.getAuthToken(), command.getGameID());
             case MAKE_MOVE -> move(command.getAuthToken(), command.getMove(), command.getGameID());
+            case RESIGN -> resign(command.getAuthToken(), command.getGameID());
         }
     }
 
@@ -84,14 +85,42 @@ public class WebSocketHandler {
     private void move(String authToken, ChessMove chessMove, int gameID) throws DataAccessException, IOException, InvalidMoveException {
         AuthData auth = auths.getAuth(authToken);
         String visitorName = auth.username();
-        String message = String.format("%s has made a move", visitorName);
+        try {
+            String message = String.format("%s has made a move", visitorName);
+            GameData game = games.getGame(gameID);
+            game.game().makeMove(chessMove);
+            games.updateGame(game);
+            ServerMessage update = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME);
+            update.setMessage(message);
+            update.setUpdatedGame(game.game());
+            connections.broadcast(visitorName, update, gameIdToSessions.get(gameID));
+        } catch (InvalidMoveException ex){
+            ServerMessage error = new ServerMessage(ServerMessage.ServerMessageType.ERROR);
+            error.setMessage("Invalid Move");
+            connections.sendMessage(visitorName,error );
+        }
+    }
+
+    private void resign(String authToken, int gameID) throws DataAccessException, IOException {
+        AuthData auth = auths.getAuth(authToken);
+        String visitorName = auth.username();
         GameData game = games.getGame(gameID);
-        game.game().makeMove(chessMove);
-        games.updateGame(game);
-        ServerMessage update = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME);
-        update.setMessage(message);
-        update.setUpdatedGame(game.game());
-        connections.broadcast(visitorName, update, gameIdToSessions.get(gameID));
+        String winner;
+        String message;
+        if (visitorName.equalsIgnoreCase(game.whiteUsername())){
+            winner = game.blackUsername();
+        } else {
+            winner = game.whiteUsername();
+        }
+        if (winner == null){
+            message = "Game over";
+        } else {
+            message = String.format("Game over. %s has resigned. %s wins!", visitorName, winner);
+        }
+        ServerMessage notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
+        notification.setMessage(message);
+        notification.setEndGame(true);
+        connections.broadcast(visitorName, notification, gameIdToSessions.get(gameID));
     }
 
 }

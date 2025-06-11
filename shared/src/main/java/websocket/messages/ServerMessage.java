@@ -15,6 +15,7 @@ public class ServerMessage {
     private ServerMessageType serverMessageType;
     private String message;
     private ChessGame updatedGame;
+    private boolean endGame;
 
     public enum ServerMessageType {
         LOAD_GAME,
@@ -24,6 +25,7 @@ public class ServerMessage {
 
     public ServerMessage(ServerMessageType type) {
         this.serverMessageType = type;
+        endGame = false;
     }
 
     public ServerMessageType getServerMessageType() {
@@ -65,5 +67,13 @@ public class ServerMessage {
 
     public void setUpdatedGame(ChessGame updatedGame) {
         this.updatedGame = updatedGame;
+    }
+
+    public boolean isEndGame() {
+        return endGame;
+    }
+
+    public void setEndGame(boolean endGame) {
+        this.endGame = endGame;
     }
 }

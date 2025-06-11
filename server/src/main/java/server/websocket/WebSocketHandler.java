@@ -1,6 +1,8 @@
 package server.websocket;
 
+import chess.ChessGame;
 import chess.ChessMove;
+import chess.ChessPosition;
 import chess.InvalidMoveException;
 import com.google.gson.Gson;
 import dataaccess.*;
@@ -56,6 +58,7 @@ public class WebSocketHandler {
 
     private void connect(String authToken, Session session, int gameID) throws IOException, DataAccessException {
         AuthData auth = auths.getAuth(authToken);
+        GameData game = games.getGame(gameID);
         String visitorName = auth.username();
         if (gameIdToSessions.get(gameID) == null){
             Set<Session> sessions = new HashSet<>();
@@ -66,7 +69,14 @@ public class WebSocketHandler {
             sessions.add(session);
         }
         connections.add(visitorName, session);
-        String message = String.format("%s has joined the game", visitorName);
+        String message;
+        if (visitorName.equalsIgnoreCase(game.whiteUsername())) {
+            message = String.format("%s has joined the game as the white player", visitorName);
+        } else if(visitorName.equalsIgnoreCase(game.blackUsername())) {
+            message = String.format("%s has joined the game as the black player", visitorName);
+        } else {
+            message = String.format("%s has joined the game as an observer", visitorName);
+        }
         ServerMessage notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
         notification.setMessage(message);
         connections.broadcast(visitorName, notification, gameIdToSessions.get(gameID));
@@ -93,15 +103,39 @@ public class WebSocketHandler {
     private void move(String authToken, ChessMove chessMove, int gameID) throws DataAccessException, IOException, InvalidMoveException {
         AuthData auth = auths.getAuth(authToken);
         String visitorName = auth.username();
+        String alphabet = "aabcdefgh";
+        ChessPosition start = chessMove.getStartPosition();
+        ChessPosition end = chessMove.getEndPosition();
+        int startCol = start.getColumn();
+        int startRow = start.getRow();
+        int endCol = end.getColumn();
+        int endRow = end.getRow();
+
         try {
-            String message = String.format("%s has made a move", visitorName);
+            String message = String.format("%s has made the move %c%d %c%d", visitorName,
+                    alphabet.charAt(startCol), startRow, alphabet.charAt(endCol), endRow);
             GameData game = games.getGame(gameID);
+            ChessGame.TeamColor opposingTeamColor;
+            String opponentName;
+            if (visitorName.equalsIgnoreCase(game.whiteUsername())){
+                opposingTeamColor = ChessGame.TeamColor.BLACK;
+                opponentName = game.blackUsername();
+            } else {
+                opposingTeamColor = ChessGame.TeamColor.WHITE;
+                opponentName = game.whiteUsername();
+            }
             game.game().makeMove(chessMove);
             games.updateGame(game);
             ServerMessage update = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME);
             update.setMessage(message);
             update.setUpdatedGame(game.game());
             connections.broadcast(visitorName, update, gameIdToSessions.get(gameID));
+            if (game.game().isInCheck(opposingTeamColor)){
+                ServerMessage notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
+                notification.setMessage(String.format("%s is in check", opponentName));
+                notification.setCheck(true);
+                connections.broadcast(visitorName,notification,gameIdToSessions.get(gameID));
+            }
         } catch (InvalidMoveException ex){
             ServerMessage error = new ServerMessage(ServerMessage.ServerMessageType.ERROR);
             error.setMessage("Invalid Move");
@@ -121,7 +155,7 @@ public class WebSocketHandler {
             winner = game.whiteUsername();
         }
         if (winner == null){
-            message = "Game over";
+            message = String.format("Game over. %s has resigned.", visitorName);
         } else {
             message = String.format("Game over. %s has resigned. %s wins!", visitorName, winner);
         }

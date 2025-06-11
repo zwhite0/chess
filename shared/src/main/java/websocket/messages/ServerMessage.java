@@ -16,6 +16,8 @@ public class ServerMessage {
     private String message;
     private ChessGame updatedGame;
     private boolean endGame;
+    private boolean check;
+    private boolean checkMate;
 
     public enum ServerMessageType {
         LOAD_GAME,
@@ -26,6 +28,8 @@ public class ServerMessage {
     public ServerMessage(ServerMessageType type) {
         this.serverMessageType = type;
         endGame = false;
+        check = false;
+        checkMate = false;
     }
 
     public ServerMessageType getServerMessageType() {
@@ -75,5 +79,21 @@ public class ServerMessage {
 
     public void setEndGame(boolean endGame) {
         this.endGame = endGame;
+    }
+
+    public boolean isCheck() {
+        return check;
+    }
+
+    public void setCheck(boolean check) {
+        this.check = check;
+    }
+
+    public boolean isCheckMate() {
+        return checkMate;
+    }
+
+    public void setCheckMate(boolean checkMate) {
+        this.checkMate = checkMate;
     }
 }

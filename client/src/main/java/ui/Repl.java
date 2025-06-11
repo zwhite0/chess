@@ -51,7 +51,10 @@ public class Repl implements NotificationHandler{
                 try {
                     result = postloginUI.eval(line);
                     inGameUI.gameID = postloginUI.gameID;
-                    if (!result.equals("quit")) {
+                    if (result.startsWith("Error:")) {
+                        System.out.print(EscapeSequences.SET_TEXT_COLOR_RED + result + "\n" +
+                                EscapeSequences.SET_TEXT_COLOR_GREEN + "[LOGGED IN]>>> ");
+                    } else if (!result.equals("quit")) {
                         System.out.print(result);
                     }
                 } catch (Throwable e){
@@ -88,14 +91,15 @@ public class Repl implements NotificationHandler{
 
     @Override
     public void notify(ServerMessage notification) {
-        System.out.print(EscapeSequences.RESET_TEXT_COLOR + notification.getMessage() +
-                EscapeSequences.SET_TEXT_COLOR_GREEN + "[CHESS GAME]>>> ");
+        System.out.print(EscapeSequences.RESET_TEXT_COLOR + "\n" + notification.getMessage()+ "\n") ;
         if (notification.getServerMessageType().equals(ServerMessage.ServerMessageType.LOAD_GAME)) {
-            if (inGameUI.teamColor.equals("white")) {
-                PostloginUI.drawWhiteBoard(inGameUI.chessGame.getBoard());
-            } else if (inGameUI.teamColor.equals("black")) {
-                PostloginUI.drawBlackBoard(inGameUI.chessGame.getBoard());
+            inGameUI.chessGame = notification.getUpdatedGame();
+            if (inGameUI.teamColor == null || inGameUI.teamColor.equals("white")) {
+                System.out.print(PostloginUI.drawWhiteBoard(inGameUI.chessGame.getBoard()));
+            } else{
+                System.out.print(PostloginUI.drawBlackBoard(inGameUI.chessGame.getBoard()));
             }
         }
+        System.out.print(EscapeSequences.SET_TEXT_COLOR_GREEN + "[CHESS GAME]>>> ");
     }
 }

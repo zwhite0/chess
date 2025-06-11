@@ -123,6 +123,7 @@ public class PostloginUI {
             ws = new WebSocketFacade(serverURL,notificationHandler);
             ws.connect(authTokenHolder.authToken, this.gameID);
             status.status = "OBSERVING_GAME";
+            inGameUI.chessGame = chessGame;
             return drawWhiteBoard(chessGame.getBoard());
         }
         throw new ResponseException(400, EscapeSequences.SET_TEXT_COLOR_RED+ "Expected: <GAME NUMBER>\n"

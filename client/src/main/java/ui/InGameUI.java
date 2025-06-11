@@ -72,9 +72,13 @@ public class InGameUI {
             ChessMove move = new ChessMove(startingPosition,endingPosition, null);
             chessGame.makeMove(move);
             ws.move(authTokenHolder.authToken,this.gameID,move);
-            return "done";
+            if (teamColor.equals("white")){
+                return PostloginUI.drawWhiteBoard(chessGame.getBoard()) + EscapeSequences.SET_TEXT_COLOR_GREEN + "[CHESS GAME]>>> ";
+            } else{
+                return PostloginUI.drawBlackBoard(chessGame.getBoard()) + EscapeSequences.SET_TEXT_COLOR_GREEN + "[CHESS GAME]>>> ";
+            }
         } else {
-            throw new ResponseException(400, EscapeSequences.SET_TEXT_COLOR_RED + "Expected: PARAMS<YOUR PIECE'S SQUARE> <SQUARE TO MOVE TO>\n"
+            throw new ResponseException(400, EscapeSequences.SET_TEXT_COLOR_RED + "Expected: <YOUR PIECE'S SQUARE> <SQUARE TO MOVE TO>\n"
                     + EscapeSequences.SET_TEXT_COLOR_GREEN + "[CHESS GAME]>>> ");
         }
     }
@@ -91,22 +95,22 @@ public class InGameUI {
             case 'g' -> endingCol = 7;
             case 'h' -> endingCol = 8;
             default -> throw new ResponseException(400, EscapeSequences.SET_TEXT_COLOR_RED+
-                    "Expected: COLUMN<YOUR PIECE'S SQUARE> <SQUARE TO MOVE TO>\n" +EscapeSequences.SET_TEXT_COLOR_GREEN + "[CHESS GAME]>>> ");
+                    "Expected: <YOUR PIECE'S SQUARE> <SQUARE TO MOVE TO>\n" +EscapeSequences.SET_TEXT_COLOR_GREEN + "[CHESS GAME]>>> ");
         }
         if (row > 8 || row <1){
             System.out.println(row);
-            throw new ResponseException(400, EscapeSequences.SET_TEXT_COLOR_RED+ "Expected: ROWS<YOUR PIECE'S SQUARE> <SQUARE TO MOVE TO>\n"
+            throw new ResponseException(400, EscapeSequences.SET_TEXT_COLOR_RED+ "Expected: <YOUR PIECE'S SQUARE> <SQUARE TO MOVE TO>\n"
                     +EscapeSequences.SET_TEXT_COLOR_GREEN + "[CHESS GAME]>>> ");
         }
         return new ChessPosition(row,endingCol);
     }
 
     public String redraw() throws ResponseException {
-        if (this.teamColor.equals("white")){
-            return PostloginUI.drawWhiteBoard(this.chessGame.getBoard());
+        if (this.teamColor == null || this.teamColor.equals("white")){
+            return PostloginUI.drawWhiteBoard(this.chessGame.getBoard()) + EscapeSequences.SET_TEXT_COLOR_GREEN + "[CHESS GAME]>>> ";
         }
         if (this.teamColor.equals("black")){
-            return PostloginUI.drawBlackBoard(this.chessGame.getBoard());
+            return PostloginUI.drawBlackBoard(this.chessGame.getBoard()) + EscapeSequences.SET_TEXT_COLOR_GREEN + "[CHESS GAME]>>> ";
         }
         throw new ResponseException(400, "Board not found");
     }

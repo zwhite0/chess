@@ -90,6 +90,7 @@ public class WebSocketHandler {
         games.updateGame(game);
         ServerMessage update = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME);
         update.setMessage(message);
+        update.setUpdatedGame(game.game());
         connections.broadcast(visitorName, update, gameIdToSessions.get(gameID));
     }
 

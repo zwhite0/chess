@@ -1,8 +1,6 @@
 package ui;
 
-import chess.ChessBoard;
-import chess.ChessGame;
-import chess.ChessPiece;
+import chess.*;
 import model.GameData;
 import sharedserver.ServerFacade;
 import sharedserver.exceptions.ResponseException;
@@ -14,6 +12,7 @@ import ui.websocket.WebSocketFacade;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 public class PostloginUI {
 
@@ -124,7 +123,7 @@ public class PostloginUI {
             ws.connect(authTokenHolder.authToken, this.gameID);
             status.status = "OBSERVING_GAME";
             inGameUI.chessGame = chessGame;
-            return drawWhiteBoard(chessGame.getBoard());
+            return "";
         }
         throw new ResponseException(400, EscapeSequences.SET_TEXT_COLOR_RED+ "Expected: <GAME NUMBER>\n"
                 +EscapeSequences.SET_TEXT_COLOR_GREEN + "[LOGGED IN]>>> ");
@@ -160,12 +159,12 @@ public class PostloginUI {
             if (params[1].equals("white") && chessGame != null){
                 inGameUI.chessGame = chessGame;
                 inGameUI.teamColor = "white";
-                return drawWhiteBoard(chessGame.getBoard());
+                return "";
             }
             if (params[1].equals("black") && chessGame != null) {
                 inGameUI.chessGame = chessGame;
                 inGameUI.teamColor = "black";
-                return drawBlackBoard(chessGame.getBoard());
+                return "";
             }
 
         }
@@ -173,20 +172,55 @@ public class PostloginUI {
                 +EscapeSequences.SET_TEXT_COLOR_GREEN + "[LOGGED IN]>>> ");
     }
 
-    public static String drawWhiteBoard(ChessBoard board) {
+    public static String drawWhiteBoard(ChessGame game, ChessPosition highlight) {
+        ChessBoard board = game.getBoard();
+        Collection<ChessMove> allMoves = new ArrayList<>();
+        int pieceRow = 0;
+        int pieceCol = 0;
+        if (highlight != null){
+            allMoves = game.validMoves(highlight);
+            pieceRow = highlight.getRow();
+            pieceCol = highlight.getColumn();
+        }
+        Collection<ChessPosition> allEndLocations = new ArrayList<>();
+        for (ChessMove move : allMoves){
+            allEndLocations.add(move.getEndPosition());
+        }
+
         ChessPiece[][] squares = board.getSquares();
         StringBuilder sb = new StringBuilder();
         sb.append(EscapeSequences.SET_BG_COLOR_LIGHT_GREY+EscapeSequences.RESET_TEXT_COLOR+
                 "    a  b  c  d  e  f  g  h    "+EscapeSequences.RESET_BG_COLOR+ "\n" );
+        Collection<Integer> locationsInRow = new ArrayList<>();
         int y = 7;
         while (y>=0){
+            locationsInRow.clear();
+            for (ChessPosition pos : allEndLocations){
+                if (pos.getRow() -1 == y ){
+                    locationsInRow.add(pos.getColumn());
+                }
+            }
             sb.append(String.format(EscapeSequences.SET_BG_COLOR_LIGHT_GREY+EscapeSequences.RESET_TEXT_COLOR+" %d ", y+1));
-            sb.append(drawRowWhiteFirst(squares[y],false));
+            if (pieceRow == y+1){
+                sb.append(drawRowWhiteFirst(squares[y],false,locationsInRow,pieceCol));
+            } else {
+                sb.append(drawRowWhiteFirst(squares[y], false, locationsInRow, -1));
+            }
             sb.append(String.format(EscapeSequences.SET_BG_COLOR_LIGHT_GREY+EscapeSequences.RESET_TEXT_COLOR+
                     " %d "+EscapeSequences.RESET_BG_COLOR+"\n", y+1));
             y--;
+            locationsInRow.clear();
+            for (ChessPosition pos : allEndLocations){
+                if (pos.getRow() -1 == y ){
+                    locationsInRow.add(pos.getColumn());
+                }
+            }
             sb.append(String.format(EscapeSequences.SET_BG_COLOR_LIGHT_GREY+EscapeSequences.RESET_TEXT_COLOR+" %d ", y+1));
-            sb.append(drawRowBlackFirst(squares[y],false));
+            if (pieceRow == y+1){
+                sb.append(drawRowBlackFirst(squares[y],false,locationsInRow,pieceCol));
+            }else {
+                sb.append(drawRowBlackFirst(squares[y], false, locationsInRow,-1));
+            }
             sb.append(String.format(EscapeSequences.SET_BG_COLOR_LIGHT_GREY+EscapeSequences.RESET_TEXT_COLOR+
                     " %d "+EscapeSequences.RESET_BG_COLOR+"\n", y+1));
             y--;
@@ -196,20 +230,54 @@ public class PostloginUI {
         return sb.toString();
     }
 
-    public static String drawBlackBoard(ChessBoard board) {
+    public static String drawBlackBoard(ChessGame game, ChessPosition highlight) {
+        ChessBoard board = game.getBoard();
+        Collection<ChessMove> allMoves = new ArrayList<>();
+        int pieceRow = 0;
+        int pieceCol=0;
+        if (highlight != null){
+            allMoves = game.validMoves(highlight);
+            pieceRow = highlight.getRow();
+            pieceCol = highlight.getColumn();
+        }
+        Collection<ChessPosition> allEndLocations = new ArrayList<>();
+        for (ChessMove move : allMoves){
+            allEndLocations.add(move.getEndPosition());
+        }
         ChessPiece[][] squares = board.getSquares();
         StringBuilder sb = new StringBuilder();
         sb.append(EscapeSequences.SET_BG_COLOR_LIGHT_GREY+EscapeSequences.RESET_TEXT_COLOR+
                 "    h  g  f  e  d  c  b  a    "+EscapeSequences.RESET_BG_COLOR+ "\n" );
+        Collection<Integer> locationsInRow = new ArrayList<>();
         int y = 0;
         while (y<=7){
+            locationsInRow.clear();
+            for (ChessPosition pos : allEndLocations){
+                if (pos.getRow() -1 == y ){
+                    locationsInRow.add(pos.getColumn());
+                }
+            }
             sb.append(String.format(EscapeSequences.SET_BG_COLOR_LIGHT_GREY+EscapeSequences.RESET_TEXT_COLOR+" %d ", y+1));
-            sb.append(drawRowWhiteFirst(squares[y],true));
+            if (pieceRow == y+1){
+                sb.append(drawRowWhiteFirst(squares[y],true,locationsInRow,pieceCol));
+            } else {
+                sb.append(drawRowWhiteFirst(squares[y], true, locationsInRow, -1));
+            }
             sb.append(String.format(EscapeSequences.SET_BG_COLOR_LIGHT_GREY+EscapeSequences.RESET_TEXT_COLOR+
                     " %d "+EscapeSequences.RESET_BG_COLOR+"\n", y+1));
             y++;
+            locationsInRow.clear();
+            for (ChessPosition pos : allEndLocations){
+                if (pos.getRow() -1 == y ){
+                    locationsInRow.add(pos.getColumn());
+                }
+            }
             sb.append(String.format(EscapeSequences.SET_BG_COLOR_LIGHT_GREY+EscapeSequences.RESET_TEXT_COLOR+" %d ", y+1));
-            sb.append(drawRowBlackFirst(squares[y],true));
+            if (pieceRow == y+1){
+                sb.append(drawRowBlackFirst(squares[y],true,locationsInRow,pieceCol));
+            }else {
+                sb.append(drawRowBlackFirst(squares[y], true, locationsInRow,-1));
+            }
             sb.append(String.format(EscapeSequences.SET_BG_COLOR_LIGHT_GREY+EscapeSequences.RESET_TEXT_COLOR+
                     " %d "+EscapeSequences.RESET_BG_COLOR+"\n", y+1));
             y++;
@@ -221,7 +289,7 @@ public class PostloginUI {
 
 
 
-    public static String drawRowWhiteFirst(ChessPiece[] row, boolean backwards){
+    public static String drawRowWhiteFirst(ChessPiece[] row, boolean backwards, Collection<Integer> locationsInRow, int pieceCol){
         StringBuilder sb = new StringBuilder();
         int x = 0;
         if (backwards){
@@ -229,9 +297,21 @@ public class PostloginUI {
         }
         int i = 1;
         while (i<5){
-            sb.append(drawWhiteSquare(row[Math.abs(x)]));
+            if (locationsInRow.contains(Math.abs(x)+1)){
+                sb.append(drawWhiteSquare(row[Math.abs(x)], true, false));
+            }else if (pieceCol == Math.abs(x)+1) {
+                sb.append(drawWhiteSquare(row[Math.abs(x)], false, true ));
+            }else {
+                sb.append(drawWhiteSquare(row[Math.abs(x)], false, false));
+            }
             x++;
-            sb.append(drawBlackSquare(row[Math.abs(x)]));
+            if (locationsInRow.contains(Math.abs(x)+1)) {
+                sb.append(drawBlackSquare(row[Math.abs(x)], true, false));
+            } else if(pieceCol == Math.abs(x)+1) {
+                sb.append(drawBlackSquare(row[Math.abs(x)], false, true ));
+            }else {
+                sb.append(drawBlackSquare(row[Math.abs(x)], false, false));
+            }
             x++;
             i++;
         }
@@ -239,7 +319,7 @@ public class PostloginUI {
         return sb.toString();
     }
 
-    public static String drawRowBlackFirst(ChessPiece[] row,boolean backwards){
+    public static String drawRowBlackFirst(ChessPiece[] row,boolean backwards,Collection<Integer> locationsInRow, int pieceCol){
         StringBuilder sb = new StringBuilder();
         int x = 0;
         if (backwards){
@@ -247,9 +327,21 @@ public class PostloginUI {
         }
         int i = 1;
         while (i<5){
-            sb.append(drawBlackSquare(row[Math.abs(x)]));
+            if (locationsInRow.contains(Math.abs(x)+1)){
+                sb.append(drawBlackSquare(row[Math.abs(x)], true, false));
+            }else if (pieceCol == Math.abs(x)+1) {
+                sb.append(drawBlackSquare(row[Math.abs(x)], false, true ));
+            }else {
+                sb.append(drawBlackSquare(row[Math.abs(x)], false, false));
+            }
             x++;
-            sb.append(drawWhiteSquare(row[Math.abs(x)]));
+            if (locationsInRow.contains(Math.abs(x)+1)) {
+                sb.append(drawWhiteSquare(row[Math.abs(x)], true, false));
+            }else if (pieceCol == Math.abs(x)+1) {
+                sb.append(drawWhiteSquare(row[Math.abs(x)], false, true ));
+            } else {
+                sb.append(drawWhiteSquare(row[Math.abs(x)], false, false));
+            }
             x++;
             i++;
         }
@@ -257,24 +349,42 @@ public class PostloginUI {
         return sb.toString();
     }
 
-    public static String drawWhiteSquare(ChessPiece square){
+    public static String drawWhiteSquare(ChessPiece square, boolean highlighted, boolean yellow){
         String whiteSquare;
         if (square == null) {
-            whiteSquare = EscapeSequences.SET_BG_COLOR_WHITE + "   ";
+            if (!highlighted) {
+                whiteSquare = EscapeSequences.SET_BG_COLOR_WHITE + "   ";
+            } else {
+                whiteSquare = EscapeSequences.SET_BG_COLOR_GREEN + "   ";
+            }
         } else {
-            
-            whiteSquare = EscapeSequences.SET_BG_COLOR_WHITE  +getPieceSequence(square) ;
+            if (!highlighted && !yellow) {
+                whiteSquare = EscapeSequences.SET_BG_COLOR_WHITE + getPieceSequence(square);
+            } else if (yellow){
+                whiteSquare = EscapeSequences.SET_BG_COLOR_YELLOW + getPieceSequence(square);
+            }else {
+                whiteSquare = EscapeSequences.SET_BG_COLOR_GREEN + getPieceSequence(square);
+            }
         }
         return whiteSquare;
     }
 
-    public static String drawBlackSquare(ChessPiece square){
+    public static String drawBlackSquare(ChessPiece square, boolean highlighted, boolean yellow){
         String blackSquare;
         if (square == null) {
-            blackSquare = EscapeSequences.SET_BG_COLOR_BLACK + "   ";
+            if (!highlighted){
+                blackSquare = EscapeSequences.SET_BG_COLOR_BLACK + "   ";
+            } else {
+                blackSquare = EscapeSequences.SET_BG_COLOR_DARK_GREEN + "   ";
+            }
         } else {
-
-            blackSquare = EscapeSequences.SET_BG_COLOR_BLACK  +getPieceSequence(square) ;
+            if (!highlighted && !yellow) {
+                blackSquare = EscapeSequences.SET_BG_COLOR_BLACK + getPieceSequence(square);
+            } else if (yellow){
+                blackSquare = EscapeSequences.SET_BG_COLOR_YELLOW + getPieceSequence(square);
+            }else {
+                blackSquare = EscapeSequences.SET_BG_COLOR_DARK_GREEN + getPieceSequence(square);
+            }
         }
         return blackSquare;
     }

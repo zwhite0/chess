@@ -14,10 +14,11 @@ import java.util.Objects;
 public class ServerMessage {
     private ServerMessageType serverMessageType;
     private String message;
-    private ChessGame updatedGame;
+    private ChessGame game;
     private boolean endGame;
     private boolean check;
     private boolean checkMate;
+    private String errorMessage;
 
     public enum ServerMessageType {
         LOAD_GAME,
@@ -66,11 +67,11 @@ public class ServerMessage {
     }
 
     public ChessGame getUpdatedGame() {
-        return updatedGame;
+        return game;
     }
 
     public void setUpdatedGame(ChessGame updatedGame) {
-        this.updatedGame = updatedGame;
+        this.game = updatedGame;
     }
 
     public boolean isEndGame() {
@@ -95,5 +96,13 @@ public class ServerMessage {
 
     public void setCheckMate(boolean checkMate) {
         this.checkMate = checkMate;
+    }
+
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
     }
 }

@@ -45,6 +45,7 @@ public class InGameUI {
                     case "move" -> move(params);
                     case "redraw" -> redraw();
                     case "resign" -> resign();
+                    case "highlight" -> highlight(params);
                     default -> help();
                 };
             } else {
@@ -66,29 +67,17 @@ public class InGameUI {
     }
 
     public String move(String... params) throws ResponseException, InvalidMoveException {
-        if (!chessGame.getTeamTurn().toString().equals(teamColor.toUpperCase())){
-            return EscapeSequences.SET_TEXT_COLOR_RED + "It's not your turn yet" +EscapeSequences.SET_TEXT_COLOR_GREEN + "\n[CHESS GAME]>>> ";
-        }
-        try {
-            if (params.length == 2) {
-                int startingRow = Character.getNumericValue(params[0].charAt(1));
-                int endingRow = Character.getNumericValue(params[1].charAt(1));
-                ChessPosition startingPosition = makeChessPosition(params[0].charAt(0), startingRow);
-                ChessPosition endingPosition = makeChessPosition(params[1].charAt(0), endingRow);
-                ChessMove move = new ChessMove(startingPosition, endingPosition, null);
-                chessGame.makeMove(move);
-                ws.move(authTokenHolder.authToken, this.gameID, move);
-                if (teamColor.equals("white")) {
-                    return PostloginUI.drawWhiteBoard(chessGame.getBoard()) + EscapeSequences.SET_TEXT_COLOR_GREEN + "[CHESS GAME]>>> ";
-                } else {
-                    return PostloginUI.drawBlackBoard(chessGame.getBoard()) + EscapeSequences.SET_TEXT_COLOR_GREEN + "[CHESS GAME]>>> ";
-                }
-            } else {
-                throw new ResponseException(400, EscapeSequences.SET_TEXT_COLOR_RED + "Expected: <YOUR PIECE'S SQUARE> <SQUARE TO MOVE TO>\n"
-                        + EscapeSequences.SET_TEXT_COLOR_GREEN + "[CHESS GAME]>>> ");
-            }
-        } catch (InvalidMoveException e){
-            return EscapeSequences.SET_TEXT_COLOR_RED + "Invalid Move" +EscapeSequences.SET_TEXT_COLOR_GREEN + "\n[CHESS GAME]>>> ";
+        if (params.length == 2) {
+            int startingRow = Character.getNumericValue(params[0].charAt(1));
+            int endingRow = Character.getNumericValue(params[1].charAt(1));
+            ChessPosition startingPosition = makeChessPosition(params[0].charAt(0), startingRow);
+            ChessPosition endingPosition = makeChessPosition(params[1].charAt(0), endingRow);
+            ChessMove move = new ChessMove(startingPosition, endingPosition, null);
+            ws.move(authTokenHolder.authToken, this.gameID, move);
+            return "";
+        } else {
+            throw new ResponseException(400, EscapeSequences.SET_TEXT_COLOR_RED + "Expected: <YOUR PIECE'S SQUARE> <SQUARE TO MOVE TO>\n"
+                    + EscapeSequences.SET_TEXT_COLOR_GREEN + "[CHESS GAME]>>> ");
         }
     }
 
@@ -116,10 +105,10 @@ public class InGameUI {
 
     public String redraw() throws ResponseException {
         if (this.teamColor == null || this.teamColor.equals("white")){
-            return PostloginUI.drawWhiteBoard(this.chessGame.getBoard()) + EscapeSequences.SET_TEXT_COLOR_GREEN + "[CHESS GAME]>>> ";
+            return PostloginUI.drawWhiteBoard(this.chessGame, null) + EscapeSequences.SET_TEXT_COLOR_GREEN + "[CHESS GAME]>>> ";
         }
         if (this.teamColor.equals("black")){
-            return PostloginUI.drawBlackBoard(this.chessGame.getBoard()) + EscapeSequences.SET_TEXT_COLOR_GREEN + "[CHESS GAME]>>> ";
+            return PostloginUI.drawBlackBoard(this.chessGame, null) + EscapeSequences.SET_TEXT_COLOR_GREEN + "[CHESS GAME]>>> ";
         }
         throw new ResponseException(400, "Board not found");
     }
@@ -139,6 +128,29 @@ public class InGameUI {
             } else {
                 System.out.println(EscapeSequences.SET_TEXT_COLOR_RED + "Expected: [YES|NO}");
             }
+        }
+    }
+
+    public String highlight(String... params) throws ResponseException {
+        if (params.length == 1){
+            String location = params[0];
+            ChessPosition pos;
+            try {
+                pos = makeChessPosition(location.charAt(0), Character.getNumericValue(location.charAt(1)));
+            } catch (ResponseException ex){
+                return EscapeSequences.SET_TEXT_COLOR_RED + "Expected: <YOUR PIECE'S SQUARE>\n"
+                        + EscapeSequences.SET_TEXT_COLOR_GREEN + "[CHESS GAME]>>> ";
+            }
+            if (this.teamColor == null || this.teamColor.equals("white")){
+                return PostloginUI.drawWhiteBoard(this.chessGame, pos) + EscapeSequences.SET_TEXT_COLOR_GREEN + "[CHESS GAME]>>> ";
+            }
+            if (this.teamColor.equals("black")){
+                return PostloginUI.drawBlackBoard(this.chessGame, pos) + EscapeSequences.SET_TEXT_COLOR_GREEN + "[CHESS GAME]>>> ";
+            }
+            throw new ResponseException(400, "Board not found");
+        } else {
+            throw new ResponseException(400, EscapeSequences.SET_TEXT_COLOR_RED + "Expected: <YOUR PIECE'S SQUARE>\n"
+                    + EscapeSequences.SET_TEXT_COLOR_GREEN + "[CHESS GAME]>>> ");
         }
     }
 

@@ -91,20 +91,23 @@ public class Repl implements NotificationHandler{
 
     @Override
     public void notify(ServerMessage notification) {
-        System.out.print(EscapeSequences.RESET_TEXT_COLOR + "\n" + notification.getMessage()+ "\n") ;
+        if (notification.getServerMessageType().equals(ServerMessage.ServerMessageType.ERROR)){
+            System.out.print(EscapeSequences.SET_TEXT_COLOR_RED + notification.getErrorMessage() + "\n" +
+                    EscapeSequences.SET_TEXT_COLOR_GREEN + "[CHESS GAME]>>> ");
+        }
         if (notification.getServerMessageType().equals(ServerMessage.ServerMessageType.LOAD_GAME)) {
             inGameUI.chessGame = notification.getUpdatedGame();
             if (inGameUI.teamColor == null || inGameUI.teamColor.equals("white")) {
-                System.out.print(PostloginUI.drawWhiteBoard(inGameUI.chessGame.getBoard()));
+                System.out.print("\n"+PostloginUI.drawWhiteBoard(inGameUI.chessGame,null) +
+                        EscapeSequences.SET_TEXT_COLOR_GREEN + "[CHESS GAME]>>> ");
             } else{
-                System.out.print(PostloginUI.drawBlackBoard(inGameUI.chessGame.getBoard()));
+                System.out.print("\n"+PostloginUI.drawBlackBoard(inGameUI.chessGame, null)+
+                        EscapeSequences.SET_TEXT_COLOR_GREEN + "[CHESS GAME]>>> ");
             }
         }
-        if (!notification.isEndGame()) {
-            System.out.print(EscapeSequences.SET_TEXT_COLOR_GREEN + "[CHESS GAME]>>> ");
-        } else {
-            status.status = "LOGGED_IN";
-            System.out.print(EscapeSequences.SET_TEXT_COLOR_GREEN + "[LOGGED IN]>>> ");
+        if (notification.getServerMessageType().equals(ServerMessage.ServerMessageType.NOTIFICATION)){
+            System.out.print(EscapeSequences.RESET_TEXT_COLOR +"\n"+ notification.getMessage() + "\n" +
+                    EscapeSequences.SET_TEXT_COLOR_GREEN + "[CHESS GAME]>>> ");
         }
     }
 }

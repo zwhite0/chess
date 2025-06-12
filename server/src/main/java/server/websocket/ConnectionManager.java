@@ -21,10 +21,10 @@ public class ConnectionManager {
         connections.remove(visitorName);
     }
 
-    public void broadcast(String excludeVisitorName, ServerMessage message, Set<Session> sessions) throws IOException {
+    public void broadcast(String excludeVisitorName, ServerMessage message, Set<Connection> sessions) throws IOException {
         var removeList = new ArrayList<Connection>();
-        for (var c : connections.values()) {
-            if (c.session.isOpen() && sessions.contains(c.session)) {
+        for (var c : sessions) {
+            if (c.session.isOpen()) {
                 if (!c.visitorName.equals(excludeVisitorName)) {
                     c.send(message.toString());
                 }
@@ -33,8 +33,8 @@ public class ConnectionManager {
             }
         }
         if (message.isEndGame()){
-            for (Session session : sessions){
-                session.close();
+            for (Connection session : sessions){
+                session.session.close();
             }
         }
 
@@ -44,10 +44,10 @@ public class ConnectionManager {
         }
     }
 
-    public void broadcastAll(ServerMessage message, Set<Session> sessions) throws IOException {
+    public void broadcastAll(ServerMessage message, Set<Connection> sessions) throws IOException {
         var removeList = new ArrayList<Connection>();
-        for (var c : connections.values()) {
-            if (c.session.isOpen() && sessions.contains(c.session)) {
+        for (var c : sessions) {
+            if (c.session.isOpen()) {
                 c.send(message.toString());
             } else {
                 removeList.add(c);

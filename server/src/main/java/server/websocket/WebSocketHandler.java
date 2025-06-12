@@ -12,7 +12,6 @@ import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import sharedserver.exceptions.DataAccessException;
-import sharedserver.exceptions.ResponseException;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ServerMessage;
 
@@ -20,7 +19,6 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.Timer;
 import java.util.concurrent.ConcurrentHashMap;
 
 
@@ -32,7 +30,7 @@ public class WebSocketHandler {
     AuthDAO auths;
     GameDAO games;
 
-    Map<Integer, Set<Session>> gameIdToSessions = new ConcurrentHashMap<>();
+    Map<Integer, Set<Connection>> gameIdToSessions = new ConcurrentHashMap<>();
 
 
     {
@@ -46,11 +44,11 @@ public class WebSocketHandler {
     }
 
     @OnWebSocketMessage
-    public void onMessage(Session session, String message) throws IOException, DataAccessException, InvalidMoveException {
+    public void onMessage(Session session, String message) throws IOException, DataAccessException{
         UserGameCommand command = new Gson().fromJson(message, UserGameCommand.class);
         switch (command.getCommandType()) {
             case CONNECT -> connect(command.getAuthToken(), session, command.getGameID());
-            case LEAVE -> leave(command.getAuthToken(), command.getGameID());
+            case LEAVE -> leave(command.getAuthToken(), command.getGameID(), session);
             case MAKE_MOVE -> move(command.getAuthToken(), command.getMove(), command.getGameID(), session);
             case RESIGN -> resign(command.getAuthToken(), command.getGameID(), session);
         }
@@ -59,41 +57,44 @@ public class WebSocketHandler {
     private void connect(String authToken, Session session, int gameID) throws IOException, DataAccessException {
         AuthData auth = auths.getAuth(authToken);
         GameData game = games.getGame(gameID);
-        if (gameIdToSessions.get(gameID) == null){
-            Set<Session> sessions = new HashSet<>();
-            sessions.add(session);
-            gameIdToSessions.put(gameID,sessions);
-        } else {
-            Set<Session> sessions = gameIdToSessions.get(gameID);
-            sessions.add(session);
-        }
-
         if (game == null || auth == null){
             ServerMessage error = new ServerMessage(ServerMessage.ServerMessageType.ERROR);
             error.setErrorMessage("error");
             session.getRemote().sendString(error.toString());
-        } else {
-            String visitorName = auth.username();
-            connections.add(visitorName, session);
-            String message;
-
-            if (visitorName.equalsIgnoreCase(game.whiteUsername())) {
-                message = String.format("%s has joined the game as the white player", visitorName);
-            } else if (visitorName.equalsIgnoreCase(game.blackUsername())) {
-                message = String.format("%s has joined the game as the black player", visitorName);
-            } else {
-                message = String.format("%s has joined the game as an observer", visitorName);
-            }
-            ServerMessage notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
-            notification.setMessage(message);
-            ServerMessage update = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME);
-            update.setUpdatedGame(game.game());
-            connections.sendMessage(session, update);
-            connections.broadcast(visitorName, notification, gameIdToSessions.get(gameID));
+            return;
         }
+
+        Connection connection = new Connection(auth.username(),session);
+        Set<Connection> sessions = gameIdToSessions.get(gameID);
+        if (sessions == null){
+            sessions = new HashSet<>();
+            sessions.add(connection);
+            gameIdToSessions.put(gameID,sessions);
+        } else {
+            sessions.add(connection);
+        }
+
+        String visitorName = auth.username();
+        connections.add(visitorName, session);
+        String message;
+
+        if (visitorName.equalsIgnoreCase(game.whiteUsername())) {
+            message = String.format("%s has joined the game as the white player", visitorName);
+        } else if (visitorName.equalsIgnoreCase(game.blackUsername())) {
+            message = String.format("%s has joined the game as the black player", visitorName);
+        } else {
+            message = String.format("%s has joined the game as an observer", visitorName);
+        }
+        ServerMessage notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
+        notification.setMessage(message);
+        ServerMessage update = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME);
+        update.setUpdatedGame(game.game());
+        connections.sendMessage(session, update);
+        connections.broadcast(visitorName, notification, gameIdToSessions.get(gameID));
+
     }
 
-    private void leave(String authToken, int gameID) throws IOException, DataAccessException {
+    private void leave(String authToken, int gameID, Session session) throws IOException, DataAccessException {
         AuthData auth = auths.getAuth(authToken);
         String visitorName = auth.username();
         String message = String.format("%s has left the game", visitorName);
@@ -109,6 +110,7 @@ public class WebSocketHandler {
         notification.setMessage(message);
         connections.broadcast(visitorName, notification, gameIdToSessions.get(gameID));
         connections.remove(visitorName);
+        session.close();
     }
 
     private void move(String authToken, ChessMove chessMove, int gameID, Session session) throws DataAccessException, IOException {
@@ -117,9 +119,10 @@ public class WebSocketHandler {
             ServerMessage error = new ServerMessage(ServerMessage.ServerMessageType.ERROR);
             error.setErrorMessage("error");
             session.getRemote().sendString(error.toString());
+            return;
         }
         String visitorName = auth.username();
-        String alphabet = "aabcdefgh";
+        String alphabet = " abcdefgh";
         ChessPosition start = chessMove.getStartPosition();
         ChessPosition end = chessMove.getEndPosition();
         int startCol = start.getColumn();

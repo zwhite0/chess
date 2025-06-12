@@ -1,9 +1,6 @@
 package ui;
 
-import chess.ChessGame;
-import chess.ChessMove;
-import chess.ChessPosition;
-import chess.InvalidMoveException;
+import chess.*;
 import sharedserver.ServerFacade;
 import sharedserver.exceptions.ResponseException;
 import ui.websocket.NotificationHandler;
@@ -72,7 +69,38 @@ public class InGameUI {
             int endingRow = Character.getNumericValue(params[1].charAt(1));
             ChessPosition startingPosition = makeChessPosition(params[0].charAt(0), startingRow);
             ChessPosition endingPosition = makeChessPosition(params[1].charAt(0), endingRow);
-            ChessMove move = new ChessMove(startingPosition, endingPosition, null);
+            ChessPiece.PieceType promotion = null;
+            if (chessGame.getBoard().getPiece(startingPosition).getPieceType().equals(ChessPiece.PieceType.PAWN)){
+                if (this.teamColor.equalsIgnoreCase("white")&&endingRow == 8 ||
+                        this.teamColor.equalsIgnoreCase("black")&&endingRow==1){
+                    Scanner scanner = new Scanner(System.in);
+                    System.out.println(EscapeSequences.RESET_TEXT_COLOR + "What would like to promote your pawn to?");
+                    boolean cont = true;
+                    while (cont) {
+                        String input = scanner.nextLine();
+                        switch (input) {
+                            case "queen" -> {
+                                promotion = ChessPiece.PieceType.QUEEN;
+                                cont = false;
+                            }
+                            case "bishop" -> {
+                                promotion = ChessPiece.PieceType.BISHOP;
+                                cont = false;
+                            }
+                            case "knight" -> {
+                                promotion = ChessPiece.PieceType.KNIGHT;
+                                cont = false;
+                            }
+                            case "rook" -> {
+                                promotion = ChessPiece.PieceType.ROOK;
+                                cont = false;
+                            }
+                            default -> System.out.println("Please input a promotion piece [queen|bishop|knight|rook]");
+                        }
+                    }
+                }
+            }
+            ChessMove move = new ChessMove(startingPosition, endingPosition, promotion);
             ws.move(authTokenHolder.authToken, this.gameID, move);
             return "";
         } else {

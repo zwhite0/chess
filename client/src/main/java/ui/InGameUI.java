@@ -49,6 +49,7 @@ public class InGameUI {
                 return switch (cmd) {
                     case "leave" -> leave();
                     case "redraw" -> redraw();
+                    case "highlight" -> highlight();
                     default -> helpObserving();
                 };
             }
@@ -69,6 +70,10 @@ public class InGameUI {
             int endingRow = Character.getNumericValue(params[1].charAt(1));
             ChessPosition startingPosition = makeChessPosition(params[0].charAt(0), startingRow);
             ChessPosition endingPosition = makeChessPosition(params[1].charAt(0), endingRow);
+            if (chessGame.getBoard().getPiece(startingPosition)==null){
+                return EscapeSequences.SET_TEXT_COLOR_RED + "Invalid Move\n" + EscapeSequences.SET_TEXT_COLOR_GREEN +
+                        "[CHESS GAME]>>> ";
+            }
             ChessPiece.PieceType promotion = getPromotionType(startingPosition,endingRow);
             ChessMove move = new ChessMove(startingPosition, endingPosition, promotion);
             ws.move(authTokenHolder.authToken, this.gameID, move);
@@ -212,6 +217,8 @@ public class InGameUI {
                         EscapeSequences.SET_TEXT_COLOR_LIGHT_GREY + "- the chess board\n"+
                         EscapeSequences.SET_TEXT_COLOR_BLUE + "leave "+
                         EscapeSequences.SET_TEXT_COLOR_LIGHT_GREY + "- the chess game\n"+
+                        EscapeSequences.SET_TEXT_COLOR_BLUE + "highlight <YOUR PIECE'S SQUARE> "+
+                        EscapeSequences.SET_TEXT_COLOR_LIGHT_GREY + "- marks the possible moves of a given piece\n"+
                         EscapeSequences.SET_TEXT_COLOR_BLUE + "help "+
                         EscapeSequences.SET_TEXT_COLOR_LIGHT_GREY + "- with possible commands\n"+
                         EscapeSequences.SET_TEXT_COLOR_GREEN + "[CHESS GAME]>>> "

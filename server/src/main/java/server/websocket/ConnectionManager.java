@@ -13,6 +13,12 @@ public class ConnectionManager {
 
 
     public void add(String visitorName, Session session) {
+        Connection existing = connections.get(visitorName);
+
+        if (existing != null && !existing.session.isOpen()) {
+            connections.remove(visitorName); // clear stale connection
+        }
+
         var connection = new Connection(visitorName, session);
         connections.put(visitorName, connection);
     }

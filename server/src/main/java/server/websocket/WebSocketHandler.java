@@ -55,15 +55,18 @@ public class WebSocketHandler {
     }
 
     private void connect(String authToken, Session session, int gameID) throws IOException, DataAccessException {
+
         AuthData auth = auths.getAuth(authToken);
         GameData game = games.getGame(gameID);
+
+
         if (game == null || auth == null){
             ServerMessage error = new ServerMessage(ServerMessage.ServerMessageType.ERROR);
             error.setErrorMessage("error");
             session.getRemote().sendString(error.toString());
             return;
         }
-
+        connections.remove(auth.username());
         Connection connection = new Connection(auth.username(),session);
         Set<Connection> sessions = gameIdToSessions.get(gameID);
         if (sessions == null){
@@ -108,9 +111,14 @@ public class WebSocketHandler {
         }
         games.updateGame(updatedGame);
         notification.setMessage(message);
+
         connections.broadcast(visitorName, notification, gameIdToSessions.get(gameID));
         connections.remove(visitorName);
-        session.close();
+        Set<Connection> sessions = gameIdToSessions.get(gameID);
+        if (sessions != null) {
+            sessions.removeIf(c -> c.visitorName.equals(visitorName));
+        }
+
     }
 
     private void move(String authToken, ChessMove chessMove, int gameID, Session session) throws DataAccessException, IOException {

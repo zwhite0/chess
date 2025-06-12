@@ -141,14 +141,14 @@ public class WebSocketHandler {
                 opposingTeamColor = ChessGame.TeamColor.WHITE;
                 opponentName = game.whiteUsername();
             }
-            if (opposingTeamColor.equals(game.game().getTeamTurn())){
-                ServerMessage error = new ServerMessage(ServerMessage.ServerMessageType.ERROR);
-                error.setErrorMessage("It is not your turn");
-                session.getRemote().sendString(error.toString());
-            } else if (game.game().isInCheckmate(game.game().getTeamTurn()) ||
+            if (game.game().isInCheckmate(game.game().getTeamTurn()) ||
                     game.game().isInStalemate(game.game().getTeamTurn()) || game.game().isGameOver()) {
                 ServerMessage error = new ServerMessage(ServerMessage.ServerMessageType.ERROR);
                 error.setErrorMessage("Game over. Type leave to play another game.");
+                session.getRemote().sendString(error.toString());
+            }else if (opposingTeamColor.equals(game.game().getTeamTurn())){
+                ServerMessage error = new ServerMessage(ServerMessage.ServerMessageType.ERROR);
+                error.setErrorMessage("It is not your turn");
                 session.getRemote().sendString(error.toString());
             }else {
                 game.game().makeMove(chessMove);

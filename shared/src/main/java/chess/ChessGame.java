@@ -133,7 +133,7 @@ public class ChessGame {
             }
         }
 
-        if (currentPiece == null || isInCheck(currentPiece.getTeamColor()) || ! isInValidMoves ||
+        if (currentPiece == null || ! isInValidMoves ||
                 ! currentPiece.getTeamColor().equals(getTeamTurn())){
             throw new InvalidMoveException();
         }

@@ -120,11 +120,10 @@ public class InGameUI {
         while (true) {
             input = scanner.nextLine();
             if (input.equalsIgnoreCase("yes")) {
-                status.status = "LOGGED_IN";
                 ws.resign(authTokenHolder.authToken, gameID);
-                return "You lose\n" + EscapeSequences.SET_TEXT_COLOR_GREEN + "[LOGGED IN]>>> ";
+                return "";
             } else if (input.equalsIgnoreCase("no")) {
-                return EscapeSequences.SET_TEXT_COLOR_GREEN + "[CHESS GAME]>>> ";
+                return "";
             } else {
                 System.out.println(EscapeSequences.SET_TEXT_COLOR_RED + "Expected: [YES|NO}");
             }
